@@ -1,5 +1,14 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+#[derive(Debug, PartialEq)]
+pub struct Token {
+    pub _type: String,
+    pub value: String,
+}
+
+pub fn tokenize_char(_type: &str, value: &str) -> Token {
+    Token {
+        _type: _type.to_string(),
+        value: value.to_string(),
+    }
 }
 
 #[cfg(test)]
@@ -8,7 +17,13 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        let res = tokenize_char("keyword", "function");
+        assert_eq!(
+            res,
+            Token {
+                _type: "keyword".to_string(),
+                value: "function".to_string()
+            }
+        );
     }
 }
