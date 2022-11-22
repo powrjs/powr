@@ -90,7 +90,7 @@ impl Tokenizer {
     }
 
     fn is_eof(&self) -> bool {
-        self.read_position >= self.input.len()
+        self.read_position > self.input.len()
     }
 
     fn is_letter(&self) -> bool {
