@@ -1,8 +1,34 @@
+use Token::*;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
-    Plus,
     Identifier(Vec<char>),
-    Semicolon,
+
+    // punctuators
+    // https://tc39.es/ecma262/#sec-punctuators
+    LeftBracket,      // [
+    RightBracket,     // ]
+    LeftParenthesis,  // (
+    RightParenthesis, // )
+    LeftBrace,        // {
+    RightBrace,       // }
+    Dot,              // .
+    Semicolon,        // ;
+    Colon,            // :
+    Comma,            // ,
+    LessThan,         // <
+    MoreThan,         // >
+    Plus,             // +
+    Minus,            // -
+    Asterisk,         // *
+    Slash,            // /
+    Percentage,       // %
+    Ampersand,        // &
+    Vertical,         // |
+    Caret,            // ^
+    Bang,             // !
+    Tilde,            // ~
+    Assign,           // =
 
     // reserved words
     Await,

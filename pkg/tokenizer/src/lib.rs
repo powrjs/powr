@@ -1,4 +1,5 @@
 use crate::token::{keyword_token, Token};
+use Token::*;
 
 mod token;
 
@@ -33,28 +34,52 @@ impl Tokenizer {
 
     pub fn next(&mut self) -> Token {
         self.skip_whitespace();
+        let token = self.get_token();
+        self.read_char();
+        token
+    }
 
-        let token = match self.ch {
-            '+' => Token::Plus,
+    fn get_token(&mut self) -> Token {
+        match self.ch {
+            '[' => LeftBracket,
+            ']' => RightBracket,
+            '(' => LeftParenthesis,
+            ')' => RightParenthesis,
+            '{' => LeftBrace,
+            '}' => RightBrace,
+            '.' => Dot,
+            ';' => Semicolon,
+            ':' => Colon,
+            ',' => Comma,
+            '<' => LessThan,
+            '>' => MoreThan,
+            '+' => Plus,
+            '-' => Minus,
+            '*' => Asterisk,
+            '/' => Slash,
+            '%' => Percentage,
+            '&' => Ampersand,
+            '|' => Vertical,
+            '^' => Caret,
+            '!' => Bang,
+            '~' => Tilde,
+            '=' => Assign,
             _ => {
                 if self.is_letter() {
                     let id = self.read_identifier();
 
                     match keyword_token(&id) {
                         Ok(token) => token,
-                        Err(_) => Token::Identifier(id),
+                        Err(_) => Identifier(id),
                     }
                 } else if self.is_number() {
                     let id = self.read_number();
-                    Token::Identifier(id)
+                    Identifier(id)
                 } else {
-                    Token::EndOfFile
+                    EndOfFile
                 }
             }
-        };
-
-        self.read_char();
-        token
+        }
     }
 
     fn read_identifier(&mut self) -> Vec<char> {
@@ -107,16 +132,16 @@ mod tests {
         let mut tokenizer = Tokenizer::new(sum);
 
         let expected = vec![
-            Token::Identifier(vec!['1']),
-            Token::Plus,
-            Token::Identifier(vec!['1']),
-            Token::EndOfFile,
+            Identifier(vec!['1']),
+            Plus,
+            Identifier(vec!['1']),
+            EndOfFile,
         ];
 
         let mut actual: Vec<Token> = Vec::new();
         let mut t = tokenizer.next();
         actual.push(t.clone());
-        while t != Token::EndOfFile {
+        while t != EndOfFile {
             t = tokenizer.next();
             actual.push(t.clone());
         }
