@@ -1,4 +1,3 @@
-use power_tokenizer::token::Token;
 use std::{env, process};
 
 use power_tokenizer::Tokenizer;
@@ -15,12 +14,10 @@ fn main() {
         let string = args.get(i).unwrap().to_owned();
         let chars: Vec<char> = string.chars().collect();
 
-        let mut tokenizer = Tokenizer::new(chars);
-        let mut last_char = Token::Illegal;
+        let tokenizer = Tokenizer::new(chars);
 
-        while last_char != Token::EndOfFile {
-            last_char = tokenizer.next();
-            println!("{:#?}", last_char);
+        for token in tokenizer {
+            println!("{:#?}", token);
         }
 
         println!();

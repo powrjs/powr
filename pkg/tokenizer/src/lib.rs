@@ -10,6 +10,21 @@ pub struct Tokenizer {
     ch: char,
 }
 
+impl Iterator for Tokenizer {
+    type Item = Token;
+
+    fn next(&mut self) -> Option<Token> {
+        self.skip_whitespace();
+        let token = self.get_token();
+        self.read_char();
+
+        match token {
+            EndOfFile => None,
+            rest => Some(rest),
+        }
+    }
+}
+
 #[allow(dead_code)]
 impl Tokenizer {
     pub fn new(input: Vec<char>) -> Self {
@@ -30,13 +45,6 @@ impl Tokenizer {
 
         self.position = self.read_position;
         self.read_position += 1;
-    }
-
-    pub fn next(&mut self) -> Token {
-        self.skip_whitespace();
-        let token = self.get_token();
-        self.read_char();
-        token
     }
 
     fn get_token(&mut self) -> Token {
