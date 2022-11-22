@@ -22,6 +22,7 @@ struct Tokenizer {
     pub ch: char,
 }
 
+#[allow(dead_code)]
 impl Tokenizer {
     pub fn new(input: Vec<char>) -> Self {
         Self {
@@ -71,7 +72,7 @@ impl Tokenizer {
     fn read_identifier(&mut self) -> Vec<char> {
         let pos = self.position;
 
-        while self.position <= self.input.len() && self.is_letter() {
+        while !self.is_eof() && self.is_letter() {
             self.read_char();
         }
 
@@ -81,11 +82,15 @@ impl Tokenizer {
     fn read_number(&mut self) -> Vec<char> {
         let pos = self.position;
 
-        while self.read_position <= self.input.len() && self.is_number() {
+        while !self.is_eof() && self.is_number() {
             self.read_char();
         }
 
         self.input[pos..self.position].to_vec()
+    }
+
+    fn is_eof(&self) -> bool {
+        self.read_position >= self.input.len()
     }
 
     fn is_letter(&self) -> bool {
