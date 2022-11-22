@@ -126,18 +126,11 @@ impl Tokenizer {
 mod tests {
     use super::*;
 
-    #[test]
-    fn sum() {
-        let sum = "1 + 1".chars().collect();
-        let mut tokenizer = Tokenizer::new(sum);
+    fn vec_char(input: &str) -> Vec<char> {
+        input.chars().collect::<Vec<char>>()
+    }
 
-        let expected = vec![
-            Identifier(vec!['1']),
-            Plus,
-            Identifier(vec!['1']),
-            EndOfFile,
-        ];
-
+    fn check(mut tokenizer: Tokenizer, expected: Vec<Token>) {
         let mut actual: Vec<Token> = Vec::new();
         let mut t = tokenizer.next();
         actual.push(t.clone());
@@ -147,5 +140,39 @@ mod tests {
         }
 
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn sum() {
+        let sum = vec_char("1 + 1");
+        let tokenizer = Tokenizer::new(sum);
+
+        let expected = vec![
+            Identifier(vec!['1']),
+            Plus,
+            Identifier(vec!['1']),
+            EndOfFile,
+        ];
+
+        check(tokenizer, expected);
+    }
+
+    #[test]
+    fn einstein() {
+        let input = vec_char("e = m * c * c");
+        let tokenizer = Tokenizer::new(input);
+
+        let expected = vec![
+            Identifier(vec!['e']),
+            Assign,
+            Identifier(vec!['m']),
+            Asterisk,
+            Identifier(vec!['c']),
+            Asterisk,
+            Identifier(vec!['c']),
+            EndOfFile,
+        ];
+
+        check(tokenizer, expected);
     }
 }
