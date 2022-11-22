@@ -142,17 +142,16 @@ mod tests {
         assert_eq!(actual, expected);
     }
 
+    fn identifier(name: &str) -> Token {
+        Identifier(name.chars().collect::<Vec<char>>())
+    }
+
     #[test]
     fn sum() {
         let sum = vec_char("1 + 1");
         let tokenizer = Tokenizer::new(sum);
 
-        let expected = vec![
-            Identifier(vec!['1']),
-            Plus,
-            Identifier(vec!['1']),
-            EndOfFile,
-        ];
+        let expected = vec![identifier("1"), Plus, identifier("1"), EndOfFile];
 
         check(tokenizer, expected);
     }
@@ -163,13 +162,13 @@ mod tests {
         let tokenizer = Tokenizer::new(input);
 
         let expected = vec![
-            Identifier(vec!['e']),
+            identifier("e"),
             Assign,
-            Identifier(vec!['m']),
+            identifier("m"),
             Asterisk,
-            Identifier(vec!['c']),
+            identifier("c"),
             Asterisk,
-            Identifier(vec!['c']),
+            identifier("c"),
             EndOfFile,
         ];
 
