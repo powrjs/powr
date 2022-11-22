@@ -82,6 +82,7 @@ impl Tokenizer {
                     }
                 } else if self.is_number() {
                     let id = self.read_number();
+
                     Identifier(id)
                 } else {
                     EndOfFile
@@ -96,6 +97,7 @@ impl Tokenizer {
         while !self.is_eof() && self.is_letter() {
             self.read_char();
         }
+        self.back();
 
         self.input[pos..self.position].to_vec()
     }
@@ -106,6 +108,7 @@ impl Tokenizer {
         while !self.is_eof() && self.is_number() {
             self.read_char();
         }
+        self.back();
 
         self.input[pos..self.position].to_vec()
     }
@@ -127,6 +130,11 @@ impl Tokenizer {
             ' ' | '\t' | '\n' | '\r' => self.read_char(),
             _ => {}
         }
+    }
+
+    fn back(&mut self) {
+        self.read_position -= 1;
+        self.ch = self.input[self.read_position - 1];
     }
 }
 
@@ -170,6 +178,53 @@ mod tests {
             identifier("c"),
             Asterisk,
             identifier("c"),
+        ];
+
+        check(tokenizer, expected);
+    }
+
+    #[test]
+    fn function() {
+        let input = vec_char("function sum(a, b) { return a + b }");
+        let tokenizer = Tokenizer::new(input);
+
+        let sum = identifier("sum");
+        let a = identifier("a");
+        let b = identifier("b");
+        let expected = vec![
+            Function,
+            sum,
+            LeftParenthesis,
+            a.clone(),
+            Comma,
+            b.clone(),
+            RightParenthesis,
+            LeftBrace,
+            Return,
+            a,
+            Plus,
+            b,
+            RightBrace,
+        ];
+
+        check(tokenizer, expected);
+    }
+
+    #[test]
+    fn symbol_after_keyword() {
+        let input = vec_char("await (this.wait(200))");
+        let tokenizer = Tokenizer::new(input);
+
+        let expected = vec![
+            Await,
+            LeftParenthesis,
+            This,
+            Dot,
+            identifier("wait"),
+            LeftParenthesis,
+            identifier("200"),
+            RightParenthesis,
+            RightParenthesis,
         ];
 
         check(tokenizer, expected);
