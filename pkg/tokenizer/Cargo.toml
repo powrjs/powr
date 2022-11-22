@@ -1,5 +1,8 @@
 [package]
 name = "power-tokenizer"
+description = "converts JS/TS code into tokens"
+authors = ["Max Power <alex@alexaa.dev>"]
+repository = "https://github.com/minsk-dev/power"
 version = "0.1.0"
 edition = "2021"
 license-file = "../../LICENSE"
