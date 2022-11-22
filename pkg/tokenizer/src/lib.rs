@@ -33,6 +33,7 @@ impl Tokenizer {
 
     pub fn next(&mut self) -> Token {
         self.skip_whitespace();
+
         let token = match self.ch {
             '+' => Token::Plus,
             _ => {
