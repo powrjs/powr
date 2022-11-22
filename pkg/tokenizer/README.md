@@ -1,5 +1,7 @@
 # `power-tokenizer`
 
+this is both a cli and a library.
+
 tokenizes a string of characters. based on ECMAScript.
 
 ## installing
