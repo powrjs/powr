@@ -138,15 +138,8 @@ mod tests {
         input.chars().collect::<Vec<char>>()
     }
 
-    fn check(mut tokenizer: Tokenizer, expected: Vec<Token>) {
-        let mut actual: Vec<Token> = Vec::new();
-        let mut t = tokenizer.next();
-        actual.push(t.clone());
-        while t != EndOfFile {
-            t = tokenizer.next();
-            actual.push(t.clone());
-        }
-
+    fn check(tokenizer: Tokenizer, expected: Vec<Token>) {
+        let actual: Vec<Token> = tokenizer.collect();
         assert_eq!(actual, expected);
     }
 
@@ -159,7 +152,7 @@ mod tests {
         let sum = vec_char("1 + 1");
         let tokenizer = Tokenizer::new(sum);
 
-        let expected = vec![identifier("1"), Plus, identifier("1"), EndOfFile];
+        let expected = vec![identifier("1"), Plus, identifier("1")];
 
         check(tokenizer, expected);
     }
@@ -177,7 +170,6 @@ mod tests {
             identifier("c"),
             Asterisk,
             identifier("c"),
-            EndOfFile,
         ];
 
         check(tokenizer, expected);
