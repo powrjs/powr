@@ -1,13 +1,13 @@
 use crate::token::{keyword_token, Token};
 use Token::*;
 
-mod token;
+pub mod token;
 
-struct Tokenizer {
+pub struct Tokenizer {
     input: Vec<char>,
-    pub position: usize,
-    pub read_position: usize,
-    pub ch: char,
+    position: usize,
+    read_position: usize,
+    ch: char,
 }
 
 #[allow(dead_code)]

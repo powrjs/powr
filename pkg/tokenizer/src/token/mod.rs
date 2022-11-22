@@ -2,6 +2,7 @@ use Token::*;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
+    Illegal,
     Identifier(Vec<char>),
 
     // punctuators
