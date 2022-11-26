@@ -382,4 +382,78 @@ mod tests {
 
         check(tokenizer, expected);
     }
+
+    #[test]
+    fn different_symbols() {
+        let input = vec_char("a = (b != c) == d");
+        let tokenizer = Tokenizer::new(input);
+
+        let expected = vec![
+            identifier("a"),
+            Assign,
+            LeftParenthesis,
+            identifier("b"),
+            NotEquals,
+            identifier("c"),
+            RightParenthesis,
+            Equals,
+            identifier("d"),
+        ];
+
+        check(tokenizer, expected);
+    }
+
+    #[test]
+    fn longer_symbols() {
+        let input = vec_char("b >>>= c");
+        let tokenizer = Tokenizer::new(input);
+
+        let expected = vec![identifier("b"), UnsignedRightShiftAssign, identifier("c")];
+
+        check(tokenizer, expected);
+    }
+
+    #[test]
+    fn keywords() {
+        let input = vec_char("if (a) { return b } else { return c }");
+        let tokenizer = Tokenizer::new(input);
+
+        let expected = vec![
+            If,
+            LeftParenthesis,
+            identifier("a"),
+            RightParenthesis,
+            LeftBrace,
+            Return,
+            identifier("b"),
+            RightBrace,
+            Else,
+            LeftBrace,
+            Return,
+            identifier("c"),
+            RightBrace,
+        ];
+
+        check(tokenizer, expected);
+    }
+    
+    #[test]
+    fn bitwise() {
+        let input = vec_char("z ^= a & b | c ^ d");
+        let tokenizer = Tokenizer::new(input);
+
+        let expected = vec![
+            identifier("z"),
+            BitwiseXORAssign,
+            identifier("a"),
+            BitwiseAnd,
+            identifier("b"),
+            BitwiseOr,
+            identifier("c"),
+            BitwiseXOR,
+            identifier("d"),
+        ];
+
+        check(tokenizer, expected);
+    }
 }
