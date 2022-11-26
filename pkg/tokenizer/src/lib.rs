@@ -1,3 +1,5 @@
+#![warn(rust_2018_idioms, missing_debug_implementations)]
+
 use crate::token::{keyword_token, Token};
 use Token::*;
 
