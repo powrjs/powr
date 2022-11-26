@@ -1,6 +1,6 @@
 # the `power` project
 
-`power` aims to be a javascript/typescript engine to power lambda functions over the web.
+`power` aims to be a javascript/typescript engine to power serverless functions over the web.
 the javascript code gets compiled to remove as much cold start JIT would cause as possible.
 
 ## roadmap
