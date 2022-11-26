@@ -458,4 +458,20 @@ mod tests {
 
         check(tokenizer, expected);
     }
+
+    #[test]
+    fn arrow_function() {
+        let input = vec_char("a => a + 1");
+        let tokenizer = Tokenizer::new(input);
+
+        let expected = vec![
+            identifier("a"),
+            Arrow,
+            identifier("a"),
+            Addition,
+            identifier("1"),
+        ];
+
+        check(tokenizer, expected);
+    }
 }
