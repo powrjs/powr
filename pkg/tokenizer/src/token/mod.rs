@@ -5,6 +5,14 @@ pub enum Token {
     Illegal,
     Identifier(Vec<char>),
 
+    /*
+       TODO:
+       Eventually every token should have a documentation line.
+       It should look like this:
+
+           /// Bitwise XOR (^)
+           BitXOR,
+    */
     // punctuators
     // https://tc39.es/ecma262/#sec-punctuators
     LeftBracket,      // [
@@ -14,22 +22,61 @@ pub enum Token {
     LeftBrace,        // {
     RightBrace,       // }
     Dot,              // .
+    Spread,           // ...
     Semicolon,        // ;
     Colon,            // :
     Comma,            // ,
-    LessThan,         // <
-    MoreThan,         // >
-    Plus,             // +
-    Minus,            // -
-    Asterisk,         // *
-    Slash,            // /
-    Percentage,       // %
-    Ampersand,        // &
-    Vertical,         // |
-    Caret,            // ^
-    Bang,             // !
-    Tilde,            // ~
-    Assign,           // =
+    QuestionMark,     // ?
+    OptionalChain,    // ?.
+
+    LessThan,        // <
+    LessEquals,      // <=
+    MoreThan,        // >
+    MoreEquals,      // >=
+    Equals,          // ==
+    NotEquals,       // !=
+    StrictEquals,    // ===
+    NotStrictEquals, // !==
+
+    Addition,             // +
+    AdditionAssign,       // +=
+    Subtraction,          // -
+    SubtractionAssign,    // -=
+    Multiplication,       // *
+    MultiplicationAssign, // *=
+    Exponentiation,       // **
+    ExponentiationAssign, // **=
+    Division,             // /
+    DivisionAssign,       // /=
+    Modulus,              // %
+    ModulusAssign,        // %=
+
+    LogicalNot,              // !
+    LogicalAnd,              // &&
+    LogicalAndAssign,        // &&=
+    LogicalOr,               // ||
+    LogicalOrAssign,         // ||=
+    NullishCoalescing,       // ??
+    NullishCoalescingAssign, // ??=
+
+    BitwiseAnd,       // &
+    BitwiseAndAssign, // &=
+    BitwiseOr,        // |
+    BitwiseOrAssign,  // |=
+    BitwiseXOR,       // ^
+    BitwiseXORAssign, // ^=
+    BitwiseNot,       // ~
+    BitwiseNotAssign, // ~=
+
+    RightShift,               // >>
+    RightShiftAssign,         // >>=
+    UnsignedRightShift,       // >>>
+    UnsignedRightShiftAssign, // >>>=
+    LeftShift,                // <<
+    LeftShiftAssign,          // <<=
+
+    Assign, // =
+    Arrow,  // =>
 
     // reserved words
     Await,
