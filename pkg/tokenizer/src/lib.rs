@@ -273,7 +273,7 @@ impl Tokenizer {
     }
 
     fn is_letter(&self) -> bool {
-        ('a' <= self.ch && 'z' > self.ch) || ('A' <= self.ch && 'Z' > self.ch) || ('_' == self.ch)
+        ('a' <= self.ch && 'z' >= self.ch) || ('A' <= self.ch && 'Z' >= self.ch) || ('_' == self.ch)
     }
 
     fn is_number(&self) -> bool {
@@ -438,7 +438,7 @@ mod tests {
 
         check(tokenizer, expected);
     }
-    
+
     #[test]
     fn bitwise() {
         let input = vec_char("z ^= a & b | c ^ d");
