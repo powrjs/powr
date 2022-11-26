@@ -3,6 +3,7 @@ use Token::*;
 
 pub mod token;
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct Tokenizer {
     input: Vec<char>,
     position: usize,
@@ -55,23 +56,150 @@ impl Tokenizer {
             ')' => RightParenthesis,
             '{' => LeftBrace,
             '}' => RightBrace,
-            '.' => Dot,
+            '.' => {
+                let is_spread =
+                    self.look_ahead() == Some('.') && self.look_ahead_by(2) == Some('.');
+                if is_spread {
+                    self.skip_next_chars_by(2);
+                    Spread
+                } else {
+                    Dot
+                }
+            }
             ';' => Semicolon,
             ':' => Colon,
             ',' => Comma,
-            '<' => LessThan,
-            '>' => MoreThan,
-            '+' => Plus,
-            '-' => Minus,
-            '*' => Asterisk,
-            '/' => Slash,
-            '%' => Percentage,
-            '&' => Ampersand,
-            '|' => Vertical,
-            '^' => Caret,
-            '!' => Bang,
-            '~' => Tilde,
-            '=' => Assign,
+            '<' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    LessEquals
+                }
+                Some('<') => match self.look_ahead_by(2usize) {
+                    Some('=') => {
+                        self.skip_next_chars_by(2usize);
+                        LeftShiftAssign
+                    }
+                    _ => {
+                        self.skip_next_char();
+                        LeftShift
+                    }
+                },
+                _ => LessThan,
+            },
+            '>' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    MoreEquals
+                }
+                Some('>') => match self.look_ahead_by(2usize) {
+                    Some('=') => {
+                        self.skip_next_chars_by(2usize);
+                        RightShiftAssign
+                    }
+                    Some('>') => match self.look_ahead_by(3usize) {
+                        Some('=') => {
+                            self.skip_next_chars_by(3usize);
+                            UnsignedRightShiftAssign
+                        }
+                        _ => {
+                            self.skip_next_chars_by(2usize);
+                            UnsignedRightShift
+                        }
+                    },
+                    _ => {
+                        self.skip_next_char();
+                        RightShift
+                    }
+                },
+                _ => MoreThan,
+            },
+            '+' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    AdditionAssign
+                }
+                _ => Addition,
+            },
+            '-' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    SubtractionAssign
+                }
+                _ => Subtraction,
+            },
+            '*' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    MultiplicationAssign
+                }
+                _ => Multiplication,
+            },
+            '/' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    DivisionAssign
+                }
+                _ => Division,
+            },
+            '%' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    ModulusAssign
+                }
+                _ => Modulus,
+            },
+            '&' => match self.look_ahead() {
+                Some('&') => {
+                    self.skip_next_char();
+                    LogicalAnd
+                }
+                _ => BitwiseAnd,
+            },
+            '|' => match self.look_ahead() {
+                Some('|') => {
+                    self.skip_next_char();
+                    LogicalOr
+                }
+                _ => BitwiseOr,
+            },
+            '^' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    BitwiseXORAssign
+                }
+                _ => BitwiseXOR,
+            },
+            '!' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    NotEquals
+                }
+                _ => LogicalNot,
+            },
+            '~' => match self.look_ahead() {
+                Some('=') => {
+                    self.skip_next_char();
+                    BitwiseNotAssign
+                }
+                _ => BitwiseNot,
+            },
+            '=' => match self.look_ahead() {
+                Some('=') => match self.look_ahead_by(2usize) {
+                    Some('=') => {
+                        self.skip_next_chars_by(2usize);
+                        StrictEquals
+                    }
+                    _ => {
+                        self.skip_next_char();
+                        Equals
+                    }
+                },
+                Some('>') => {
+                    self.skip_next_char();
+                    Arrow
+                }
+                _ => Assign,
+            },
             _ => {
                 if self.is_letter() {
                     let id = self.read_identifier();
@@ -89,6 +217,31 @@ impl Tokenizer {
                 }
             }
         }
+    }
+
+    /// Returns the next char, based on the struct state.
+    fn look_ahead(&mut self) -> Option<char> {
+        self.look_ahead_by(1)
+    }
+
+    /// Returns the next `x` char, based on the struct state.
+    fn look_ahead_by(&mut self, x: usize) -> Option<char> {
+        let next_position = self.position + x;
+
+        if next_position > self.input.len() || self.input.get(next_position).is_none() {
+            None
+        } else {
+            self.input.get(next_position).map(|c| *c)
+        }
+    }
+
+    fn skip_next_char(&mut self) {
+        self.skip_next_chars_by(1);
+    }
+
+    fn skip_next_chars_by(&mut self, x: usize) {
+        self.position += x;
+        self.read_position += x;
     }
 
     fn read_identifier(&mut self) -> Vec<char> {
@@ -160,7 +313,7 @@ mod tests {
         let sum = vec_char("1 + 1");
         let tokenizer = Tokenizer::new(sum);
 
-        let expected = vec![identifier("1"), Plus, identifier("1")];
+        let expected = vec![identifier("1"), Addition, identifier("1")];
 
         check(tokenizer, expected);
     }
@@ -174,9 +327,9 @@ mod tests {
             identifier("e"),
             Assign,
             identifier("m"),
-            Asterisk,
+            Multiplication,
             identifier("c"),
-            Asterisk,
+            Multiplication,
             identifier("c"),
         ];
 
@@ -202,7 +355,7 @@ mod tests {
             LeftBrace,
             Return,
             a,
-            Plus,
+            Addition,
             b,
             RightBrace,
         ];
