@@ -62,7 +62,7 @@ impl Tokenizer {
                 let is_spread =
                     self.look_ahead() == Some('.') && self.look_ahead_by(2) == Some('.');
                 if is_spread {
-                    self.skip_next_chars_by(2);
+                    self.skip_chars_by(2);
                     Spread
                 } else {
                     Dot
@@ -78,7 +78,7 @@ impl Tokenizer {
                 }
                 Some('<') => match self.look_ahead_by(2usize) {
                     Some('=') => {
-                        self.skip_next_chars_by(2usize);
+                        self.skip_chars_by(2usize);
                         LeftShiftAssign
                     }
                     _ => {
@@ -95,16 +95,16 @@ impl Tokenizer {
                 }
                 Some('>') => match self.look_ahead_by(2usize) {
                     Some('=') => {
-                        self.skip_next_chars_by(2usize);
+                        self.skip_chars_by(2usize);
                         RightShiftAssign
                     }
                     Some('>') => match self.look_ahead_by(3usize) {
                         Some('=') => {
-                            self.skip_next_chars_by(3usize);
+                            self.skip_chars_by(3usize);
                             UnsignedRightShiftAssign
                         }
                         _ => {
-                            self.skip_next_chars_by(2usize);
+                            self.skip_chars_by(2usize);
                             UnsignedRightShift
                         }
                     },
@@ -188,7 +188,7 @@ impl Tokenizer {
             '=' => match self.look_ahead() {
                 Some('=') => match self.look_ahead_by(2usize) {
                     Some('=') => {
-                        self.skip_next_chars_by(2usize);
+                        self.skip_chars_by(2usize);
                         StrictEquals
                     }
                     _ => {
@@ -238,10 +238,10 @@ impl Tokenizer {
     }
 
     fn skip_next_char(&mut self) {
-        self.skip_next_chars_by(1);
+        self.skip_chars_by(1);
     }
 
-    fn skip_next_chars_by(&mut self, x: usize) {
+    fn skip_chars_by(&mut self, x: usize) {
         self.position += x;
         self.read_position += x;
     }
