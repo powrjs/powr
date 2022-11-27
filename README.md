@@ -22,4 +22,6 @@ they will have to be replaced to compiling directly instead.
 
 ## license
 
-[BSD-3-Clause](LICENSE)
+currently, the project uses [SSPL-1.0](LICENSE). this project may be funded by dual licensing it under a more permissive
+license.
+this is not decided yet, and will be decided once the project is in a usable state.
