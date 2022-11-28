@@ -3,6 +3,15 @@
 `power` aims to be a javascript/typescript engine to power serverless functions over the web.
 the javascript code gets compiled to remove as much cold start interpreting would cause as possible.
 
+## todos
+
+more or less where the project stands.
+
+- [X] tokenizer/lexer/scanner
+- [ ] parser
+- [ ] transpiler (temporary feature)
+- [ ] LLVM
+
 ## roadmap
 
 for this project to get on a usable state as fast as possible, it will have to follow a roadmap of changes.
