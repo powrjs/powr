@@ -6,11 +6,11 @@ struct JavaScriptParser;
 
 #[cfg(test)]
 mod tests {
-    use crate::{JavaScriptParser, Rule};
+    use crate::*;
     use pest::Parser;
 
     #[test]
     fn it_works() {
-        let js = JavaScriptParser::parse(Rule::field, "123").unwrap();
+        JavaScriptParser::parse(Rule::program, "if (a > b) { return 3 }").unwrap();
     }
 }
