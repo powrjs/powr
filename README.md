@@ -22,6 +22,4 @@ they will have to be replaced to compiling directly instead.
 
 ## license
 
-currently, the project uses [SSPL-1.0](LICENSE). this project may be funded by dual licensing it under a more permissive
-license.
-this is not decided yet, and will be decided once the project is in a usable state.
+currently, the project uses [SSPL-1.0](LICENSE). this license will be changed when the project gets to a more usable state. because this license blocks lesser effort (for a lack of a better term!) contributions (and these are very desirable!), the license may become more permissive before the project is shippable.
