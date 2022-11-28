@@ -1,0 +1,55 @@
+// JavaScript
+
+// Program
+program = _{ SOI ~ statement ~ EOI }
+// TODO: statement = _{ ifStatement | whileStatement | forStatement | returnStatement | breakStatement | continueStatement | blockStatement | expressionStatement }
+statement = { if_statement | expression_statement }
+if_statement = _{ "if" ~ "(" ~ expression ~ ")" ~ "{"? ~ statement ~ "}"? ~ ("}" ~ "else" ~ "{" ~ statement ~ "}")? }
+expression = _{ unary_operator? ~ identifier ~ binary_operator? ~ identifier? }
+binary_operator = { "==" | "!=" | "<" | "<=" | ">" | ">=" | "+" | "-" | "*" | "/" | "%" | "&&" | "||" }
+unary_operator = { "!" | "-" | "+" | "~" | "typeof" | "void" | "delete" }
+expression_statement = _{ keyword ~ identifier ~ ";"? }
+identifier = { "true" | "false" | "null" | "undefined" | number | string | identifier_name }
+
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+
+boolean = { "true" | "false" }
+null = { "null" }
+string = _{ "\"" ~ inner ~ "\"" | "'" ~ inner ~ "'" }
+inner = @{ char* }
+char = _{ !("\"" | "\\") ~ ANY }
+number = @{
+    "-"?
+    ~ ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*)
+    ~ ("." ~ ASCII_DIGIT+)?
+    ~ (^"e" ~ ("+" | "-")? ~ ASCII_DIGIT+)?
+}
+
+// Keywords
+contextually_disallowed_as_identifiers = _{
+    "let" | "static" | "implements" | "interface" | "package" | "private" | "protected" | "public"
+}
+
+contextually_allowed_as_identifiers = _{
+    "await" | "yield"
+}
+
+always_allowed_in_correct_context = _{
+    "as" | "async" | "from" | "get" | "meta" | "of" | "set" | "target"
+}
+
+future_reserved_keywords = _{
+    "enum"
+}
+
+keyword = _{ "break" | "case" | "catch" | "continue" | "debugger" | "default" | "delete" | "do" | "else" | "finally"
+    | "for" | "function" | "if" | "in" | "instanceof" | "new" | "return" | "switch" | "this" | "throw" | "try" | "typeof"
+    | "var" | "void" | "while" | "with" | "class" | "const" | "export" | "extends" | "import" | "super"
+    | always_allowed_in_correct_context | contextually_allowed_as_identifiers | contextually_disallowed_as_identifiers
+    | future_reserved_keywords }
+
+// Identifiers
+identifier_name = @{ ASCII_ALPHANUMERIC | "$" | "_" }
+
+// Punctuators
+punctuator = _{ "+" | "-" }
