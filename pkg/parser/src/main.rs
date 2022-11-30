@@ -12,6 +12,7 @@ fn main() {
                 println!("Rule: {:?}", pair.as_rule());
                 println!("Text: {}", pair.as_str());
                 println!();
+                println!("\t[rule]: string text");
 
                 print_inner(pair, 1);
             }
