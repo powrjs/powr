@@ -7,7 +7,7 @@ use std::fs::read;
 struct JavaScriptParser;
 
 fn main() {
-    let code = String::from_utf8(read("examples/fizzbuzz.js").unwrap()).unwrap();
+    let code = String::from_utf8(read("examples/values.js").unwrap()).unwrap();
     match JavaScriptParser::parse(Rule::program, code.as_str()) {
         Ok(js) => println!("{:#?}", js),
         Err(e) => eprintln!("{}", e),
