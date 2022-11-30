@@ -10,7 +10,7 @@ statement_expression = _{ value ~ binary_operator ~ value }
 name = _{ (ASCII_ALPHA | "_" | "$") ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
 
 // values
-value = _{ boolean | number | string | array | object | function }
+value = _{ boolean | number | string | array | object | function | regex | name }
     boolean = _{ "true" | "false" }
     nullish = _{ null | undefined }
         null = _{ "null" }
@@ -28,6 +28,7 @@ value = _{ boolean | number | string | array | object | function }
     object = _{ "{" ~ pair* ~ "}" }
         pair = _{ pair_key ~ ":" ~ value }
         pair_key = _{ string | number | name }
+    regex = _{ "/" ~ inner ~ "/" }
 
 function = _{ "function" ~ name ~ "(" ~ (name ~ ("," ~ name)?)* ~ ")" ~ "{"? ~ "}"? }
     function_body = _{ "return" ~ value ~ ";"? }
