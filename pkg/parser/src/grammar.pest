@@ -2,20 +2,24 @@
 
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 
-program = _{ SOI ~ (statement ~ ";"?)* ~ EOI }
-statement = _{ statement_expression }
-statement_expression = _{ value ~ binary_operator ~ value }
+program = { SOI ~ (statement ~ ";"?)* ~ EOI }
+statement = { statement_expression }
+statement_expression = { (value ~ operator ~ value) | value }
 
 // identifiers
-name = _{ (ASCII_ALPHA | "_" | "$") ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
+name = { (ASCII_ALPHA | "_" | "$") ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
+
+// punctuators
+operator = { binary_operator }
+binary_operator = { "+" | "!=" | "===" }
 
 // values
-value = _{ boolean | number | string | array | object | function | regex | name }
-    boolean = _{ "true" | "false" }
-    nullish = _{ null | undefined }
-        null = _{ "null" }
-        undefined = _{ "undefined" }
-    string = _{ "\"" ~ inner ~ "\"" | "\'" ~ inner ~ "\'" }
+value = { boolean | number | string | object | function | nullish | regex | name | array }
+    boolean = { "true" | "false" }
+    nullish = { null | undefined }
+        null = { "null" }
+        undefined = { "undefined" }
+    string = { "\"" ~ inner ~ "\"" | "\'" ~ inner ~ "\'" }
         inner = @{ char* }
             char = _{ !("\"" | "\\") ~ ANY }
     number = @{
@@ -24,11 +28,11 @@ value = _{ boolean | number | string | array | object | function | regex | name 
         ~ ("." ~ ASCII_DIGIT+)?
         ~ (^"e" ~ ("+" | "-")? ~ ASCII_DIGIT+)?
     }
-    array = _{ "[" ~ value* ~ "]" }
-    object = _{ "{" ~ pair* ~ "}" }
-        pair = _{ pair_key ~ ":" ~ value }
-        pair_key = _{ string | number | name }
-    regex = _{ "/" ~ inner ~ "/" }
+    array = { "[" ~ (value ~ ",")*? ~ value? ~ "]" }
+    object = { "("? ~ "{" ~ pair* ~ "}" ~ ")"? }
+        pair = { pair_key ~ ":" ~ value ~ ","? }
+        pair_key = { string | number | name }
+    regex = { "/" ~ inner ~ "/" }
 
-function = _{ "function" ~ name ~ "(" ~ (name ~ ("," ~ name)?)* ~ ")" ~ "{"? ~ "}"? }
-    function_body = _{ "return" ~ value ~ ";"? }
+function = { "function" ~ name ~ "(" ~ (name ~ ("," ~ name)?)* ~ ")" ~ "{"? ~ "}"? }
+    function_body = { "return" ~ value ~ ";"? }
