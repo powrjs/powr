@@ -2,10 +2,10 @@
 
 WHITESPACE = _{ " " | NEWLINE }
 
-program = { SOI ~ (statement ~ ";"?)* ~ EOI }
+program = { SOI ~ (statement ~ ";"?)* ~ EOI } // FIXME: Everything regarding semicolons is buggy
 statement = _{ declaration | expression | return_statement }
     return_statement = { "return" ~ expression }
-expression = _{ ((value ~ operator ~ value) | value) ~ ";"? }
+expression = _{ ((value ~ operator ~ value) | value) ~ ";"? } // FIXME: semicolon
 declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expression }
 
 // identifiers
