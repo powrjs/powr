@@ -67,6 +67,7 @@ mod tests {
     fn functions() {
         parse("function() {}");
         parse("function() { return 1; }");
+        parse("function sum(a, b) { return a + b; }");
     }
 
     #[test]

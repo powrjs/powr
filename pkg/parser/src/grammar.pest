@@ -38,5 +38,4 @@ value = { boolean | number | string | object | function | nullish | regex | name
         pair_key = _{ string | number | name }
     regex = { "/" ~ inner ~ "/" }
 
-function = { "function" ~ name? ~ "(" ~ (name ~ ("," ~ name)?)* ~ ")" ~ "{"? ~ function_body? ~ "}"? }
-    function_body = _{ ("return" ~ value ~ ";"?) | statement }
+    function_body = _{ ("return" ~ value ~ ";"?) | statement }function = { "function" ~ name? ~ "(" ~ (name ~ ("," ~ name)?)* ~ ")" ~ ("{" ~ function_body? ~ "}" | function_body?) }
