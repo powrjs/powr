@@ -3,8 +3,9 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 
 program = { SOI ~ (statement ~ ";"?)* ~ EOI }
-statement = { declaration | expression }
-expression = { (value ~ operator ~ value) | value }
+statement = _{ declaration | expression | return_statement }
+    return_statement = { "return" ~ expression }
+expression = _{ ((value ~ operator ~ value) | value) ~ ";"? }
 declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expression }
 
 // identifiers

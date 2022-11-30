@@ -75,6 +75,19 @@ mod tests {
         parse("const a = b;");
         parse("let c = d;");
         parse("var e = f;");
+        parse("foo = bar");
+        parse("foo += bar");
+        parse("foo -= bar");
+        parse("foo *= bar");
+        parse("foo /= bar");
+        parse("foo %= bar");
+        parse("foo **= bar");
+        parse("foo <<= bar");
+        parse("foo >>= bar");
+        parse("foo >>>= bar");
+        parse("foo &= bar");
+        parse("foo ^= bar");
+        parse("foo |= bar");
     }
 
     #[test]
