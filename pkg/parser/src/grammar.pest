@@ -13,6 +13,7 @@ statement = _{ if_statement | declaration | return_statement | while_statement |
     }
     while_statement = { "while" ~ "(" ~ expression ~ ")" ~ (("{" ~ statement* ~ "}") | statement) }
 expression = _{ ((value ~ operator ~ value) | value) ~ ";"? } // FIXME: semicolon
+arguments = { expression ~ ("," ~ expression)* }
 
 // identifiers
 identifier = ${ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
@@ -46,8 +47,8 @@ value = _{ literal | object | function | arrow_function | regex | keyword | iden
         pair = { pair_key ~ ":" ~ value ~ ","? }
         pair_key = _{ string | number | identifier }
     regex = { "/" ~ inner ~ "/" }
-    function = { "function" ~ identifier? ~ "(" ~ (identifier ~ ("," ~ identifier)?)* ~ ")" ~ ("{" ~ function_body? ~ "}" | function_body?) }
+    function = { "function" ~ identifier? ~ "(" ~ arguments? ~ ")" ~ ("{" ~ function_body? ~ "}" | function_body?) }
         function_body = { statement* }
-    arrow_function = { "(" ~ (identifier ~ ("," ~ identifier)?)* ~ ")" ~ "=>" ~ ("{" ~ function_body? ~ "}" | arrow_function_body?) }
+    arrow_function = { "(" ~ arguments? ~ ")" ~ "=>" ~ ("{" ~ function_body? ~ "}" | arrow_function_body?) }
         arrow_function_body = { implicit_return | statement* }
         implicit_return = { expression }
