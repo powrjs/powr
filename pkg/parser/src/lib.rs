@@ -64,5 +64,12 @@ mod tests {
         parse("function() {}");
         parse("function() { return 1; }");
     }
+
+    #[test]
+    fn assignments() {
+        parse("const a;");
+        parse("const a = b;");
+        parse("let c = d;");
+        parse("var e = f;");
     }
 }
