@@ -13,6 +13,10 @@ mod tests {
         JavaScriptParser::parse(Rule::program, input).unwrap();
     }
 
+    fn parse_rule(input: &str, rule: Rule) {
+        JavaScriptParser::parse(rule, input).unwrap();
+    }
+
     #[test]
     fn it_works() {
         parse("1 + 1;")
@@ -71,5 +75,32 @@ mod tests {
         parse("const a = b;");
         parse("let c = d;");
         parse("var e = f;");
+    }
+
+    #[test]
+    fn operators() {
+        parse_rule("1 + 1", Rule::expression);
+        parse_rule("1 - 1", Rule::expression);
+        parse_rule("1 * 1", Rule::expression);
+        parse_rule("1 / 1;", Rule::expression);
+        parse_rule("1 % 1;", Rule::expression);
+        parse_rule("1 ** 1;", Rule::expression);
+        parse_rule("1 << 1;", Rule::expression);
+        parse_rule("1 >> 1;", Rule::expression);
+        parse_rule("1 >>> 1;", Rule::expression);
+        parse_rule("1 & 1;", Rule::expression);
+        parse_rule("1 | 1;", Rule::expression);
+        parse_rule("1 ^ 1;", Rule::expression);
+        parse_rule("1 && 1;", Rule::expression);
+        parse_rule("1 || 1;", Rule::expression);
+        parse_rule("1 ?? 1;", Rule::expression);
+        parse_rule("1 == 1;", Rule::expression);
+        parse_rule("1 === 1;", Rule::expression);
+        parse_rule("1 != 1;", Rule::expression);
+        parse_rule("1 !== 1;", Rule::expression);
+        parse_rule("1 < 1;", Rule::expression);
+        parse_rule("1 <= 1;", Rule::expression);
+        parse_rule("1 > 1;", Rule::expression);
+        parse_rule("1 >= 1;", Rule::expression);
     }
 }

@@ -3,16 +3,18 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 
 program = { SOI ~ (statement ~ ";"?)* ~ EOI }
-statement = { assignment_statement | expression }
+statement = { declaration | expression }
 expression = { (value ~ operator ~ value) | value }
-assignment_statement = { ("const" | "let" | "var")? ~ value ~ "=" ~ expression }
+declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expression }
 
 // identifiers
-name = @{ (ASCII_ALPHANUMERIC | "_" | "$")+ }
+name = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
 
 // punctuators
-operator = { binary_operator }
-binary_operator = { "+" | "!=" | "===" | "==" }
+operator = { binary_operator | assignment_operator }
+    binary_operator = { bitwise_operator | "+" | "-" | "*" | "/" | "%" | "**" | "==" | "!=" | "===" | "!==" | "<" | "<=" | ">" | ">=" | "&&" | "||" }
+        bitwise_operator = { "&" | "|" | "^" | "<<" | ">>" | ">>>" }
+assignment_operator = { "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" | "**=" }
 
 // values
 value = { boolean | number | string | object | function | nullish | regex | name | array }
@@ -22,7 +24,7 @@ value = { boolean | number | string | object | function | nullish | regex | name
         undefined = { "undefined" }
     string = { "\"" ~ inner ~ "\"" | "\'" ~ inner ~ "\'" }
         inner = @{ char* }
-            char = _{ !("\"" | "\\") ~ ANY }
+            char = { !("\"" | "\\") ~ ANY }
     number = @{
         "-"?
         ~ ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*)
