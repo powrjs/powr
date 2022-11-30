@@ -1,6 +1,6 @@
 // JavaScript PEG/Pest grammar
 
-WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+WHITESPACE = _{ " " | NEWLINE }
 
 program = { SOI ~ (statement ~ ";"?)* ~ EOI }
 statement = _{ declaration | expression | return_statement }
@@ -9,24 +9,24 @@ expression = _{ ((value ~ operator ~ value) | value) ~ ";"? }
 declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expression }
 
 // identifiers
-name = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
+name = ${ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
 
 // punctuators
-operator = { binary_operator | assignment_operator }
+operator = _{ binary_operator | assignment_operator }
     binary_operator = { bitwise_operator | "+" | "-" | "*" | "/" | "%" | "**" | "==" | "!=" | "===" | "!==" | "<" | "<=" | ">" | ">=" | "&&" | "||" }
         bitwise_operator = { "&" | "|" | "^" | "<<" | ">>" | ">>>" }
 assignment_operator = { "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" | "**=" }
 
 // values
-value = { boolean | number | string | object | function | nullish | regex | name | array }
+value = _{ boolean | number | string | object | function | nullish | regex | name | array }
     boolean = { "true" | "false" }
     nullish = { null | undefined }
         null = { "null" }
         undefined = { "undefined" }
     string = { "\"" ~ inner ~ "\"" | "\'" ~ inner ~ "\'" }
-        inner = @{ char* }
+        inner = ${ char* }
             char = { !("\"" | "\\") ~ ANY }
-    number = @{
+    number = ${
         "-"?
         ~ ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*)
         ~ ("." ~ ASCII_DIGIT+)?
@@ -38,4 +38,5 @@ value = { boolean | number | string | object | function | nullish | regex | name
         pair_key = _{ string | number | name }
     regex = { "/" ~ inner ~ "/" }
 
-    function_body = _{ ("return" ~ value ~ ";"?) | statement }function = { "function" ~ name? ~ "(" ~ (name ~ ("," ~ name)?)* ~ ")" ~ ("{" ~ function_body? ~ "}" | function_body?) }
+function = { "function" ~ name? ~ "(" ~ (name ~ ("," ~ name)?)* ~ ")" ~ ("{" ~ function_body? ~ "}" | function_body?) }
+    function_body = {  statement* }
