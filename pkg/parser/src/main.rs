@@ -1,12 +1,25 @@
 use pest::Parser;
 use pest_derive::Parser;
+use process::exit;
+use std::{env, process};
 
 #[derive(Parser)]
 #[grammar = "grammar.pest"]
 struct JavaScriptParser;
 
 fn main() {
-    match JavaScriptParser::parse(Rule::program, "function sum(a, b) { return a + b; }") {
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() != 2 {
+        println!("Usage: {} [javascript code]", args[0]);
+        exit(1);
+    }
+
+    parse_code(&args[1]);
+}
+
+fn parse_code(code: &str) {
+    match JavaScriptParser::parse(Rule::program, code) {
         Ok(pairs) => {
             for pair in pairs {
                 println!("Rule: {:?}", pair.as_rule());
@@ -35,6 +48,8 @@ fn print_inner(pair: pest::iterators::Pair<Rule>, level: usize) {
             inner_pair.as_str()
         );
 
-        print_inner(inner_pair, level + 1);
+        if inner_pair.as_rule().ne(&Rule::literal) {
+            print_inner(inner_pair, level + 1);
+        }
     }
 }
