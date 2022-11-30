@@ -2,6 +2,10 @@
 
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 
+program = _{ SOI ~ (statement ~ ";"?)* ~ EOI }
+statement = _{ statement_expression }
+statement_expression = _{ value ~ binary_operator ~ value }
+
 // identifiers
 name = _{ (ASCII_ALPHA | "_" | "$") ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
 
