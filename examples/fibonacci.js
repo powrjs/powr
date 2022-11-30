@@ -1,3 +1,11 @@
+// this is a simple example of a fibonacci sequence generator
+// it is not optimized for performance
+// it is not optimized for memory usage
+// it is not optimized for readability
+// it is not optimized for maintainability
+// it is not optimized for anything
+// it is just a simple example of a fibonacci sequence generator
+// gotta love copilot
 function fibonacci(number) {
     let result = 0;
     let previous = 0;
@@ -12,4 +20,5 @@ function fibonacci(number) {
     return result;
 }
 
+// usage of the fibonacci function
 console.log(fibonacci(10));
