@@ -13,10 +13,10 @@ identifier = ${ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
 keyword = _{ "return" | "const" | "let" | "var" | "function" }
 
 // punctuators
-operator = _{ binary_operator | assignment_operator }
-    binary_operator = { bitwise_operator | "+" | "-" | "*" | "/" | "%" | "**" | "==" | "!=" | "===" | "!==" | "<" | "<=" | ">" | ">=" | "&&" | "||" }
-        bitwise_operator = { "&" | "|" | "^" | "<<" | ">>" | ">>>" }
-assignment_operator = { "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" | "**=" }
+operator = { binary_operator | assignment_operator }
+    binary_operator = _{ bitwise_operator | "+" | "-" | "*" | "/" | "%" | "**" | "==" | "!=" | "===" | "!==" | "<" | "<=" | ">" | ">=" | "&&" | "||" }
+        bitwise_operator = _{ "&" | "|" | "^" | "<<" | ">>" | ">>>" }
+assignment_operator = _{ "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" | "**=" }
 
 // values
 value = _{ boolean | number | string | object | function | nullish | regex | keyword | identifier | array }
