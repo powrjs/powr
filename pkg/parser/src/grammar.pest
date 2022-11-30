@@ -16,7 +16,7 @@ expression = _{ ((value ~ operator ~ value) | value) ~ ";"? } // FIXME: semicolo
 arguments = { expression ~ ("," ~ expression)* }
 
 // identifiers
-identifier = ${ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
+identifier = ${ (ASCII_ALPHA | "_" | "$") ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
 // ignores keywords
 keyword = _{ "return" | "const" | "let" | "var" | "function" }
 
