@@ -122,4 +122,10 @@ mod tests {
     fn new_lines() {
         parse("function append(a, b) {\nreturn a + b;\n}");
     }
+
+    #[test]
+    fn arrow_function() {
+        parse("const sum = (a, b) => a + b;");
+        parse("const sum = (a, b) => {\nreturn a + b;\n}");
+    }
 }

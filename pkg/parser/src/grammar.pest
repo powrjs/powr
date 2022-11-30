@@ -10,6 +10,7 @@ declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expre
 
 // identifiers
 identifier = ${ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
+// ignores keywords
 keyword = _{ "return" | "const" | "let" | "var" | "function" }
 
 // punctuators
@@ -19,7 +20,7 @@ operator = { binary_operator | assignment_operator }
 assignment_operator = _{ "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" | "**=" }
 
 // values
-value = _{ boolean | number | string | object | function | nullish | regex | keyword | identifier | array }
+value = _{ boolean | number | string | object | function | arrow_function | nullish | regex | keyword | identifier | array }
     boolean = { "true" | "false" }
     nullish = { null | undefined }
         null = { "null" }
@@ -39,4 +40,7 @@ value = _{ boolean | number | string | object | function | nullish | regex | key
         pair_key = _{ string | number | identifier }
     regex = { "/" ~ inner ~ "/" }
     function = { "function" ~ identifier? ~ "(" ~ (identifier ~ ("," ~ identifier)?)* ~ ")" ~ ("{" ~ function_body? ~ "}" | function_body?) }
-        function_body = {  statement* }
+        function_body = { statement* }
+    arrow_function = { "(" ~ (identifier ~ ("," ~ identifier)?)* ~ ")" ~ "=>" ~ ("{" ~ function_body? ~ "}" | arrow_function_body?) }
+        arrow_function_body = { implicit_return | statement* }
+        implicit_return = { expression }
