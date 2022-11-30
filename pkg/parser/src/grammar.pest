@@ -1,0 +1,29 @@
+// JavaScript PEG/Pest grammar
+
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+
+// identifiers
+name = _{ (ASCII_ALPHA | "_" | "$") ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
+
+// values
+value = _{ boolean | number | string | array | object | function }
+    boolean = _{ "true" | "false" }
+    nullish = _{ null | undefined }
+        null = _{ "null" }
+        undefined = _{ "undefined" }
+    string = _{ "\"" ~ inner ~ "\"" | "\'" ~ inner ~ "\'" }
+        inner = @{ char* }
+            char = _{ !("\"" | "\\") ~ ANY }
+    number = @{
+        "-"?
+        ~ ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*)
+        ~ ("." ~ ASCII_DIGIT+)?
+        ~ (^"e" ~ ("+" | "-")? ~ ASCII_DIGIT+)?
+    }
+    array = _{ "[" ~ value* ~ "]" }
+    object = _{ "{" ~ pair* ~ "}" }
+        pair = _{ pair_key ~ ":" ~ value }
+        pair_key = _{ string | number | name }
+
+function = _{ "function" ~ name ~ "(" ~ (name ~ ("," ~ name)?)* ~ ")" ~ "{"? ~ "}"? }
+    function_body = _{ "return" ~ value ~ ";"? }
