@@ -136,4 +136,9 @@ mod tests {
         parse("if (true) { return 1; } else { return 2; }");
         parse("if (true) { return 1; } else if (true) { return 3; } else { return 2; }");
     }
+
+    #[test]
+    fn do_statement() {
+        parse("while (true) { return 1; }");
+    }
 }

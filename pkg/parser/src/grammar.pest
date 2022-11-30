@@ -3,7 +3,7 @@
 WHITESPACE = _{ " " | NEWLINE }
 
 program = { SOI ~ (statement ~ ";"?)* ~ EOI } // FIXME: Everything regarding semicolons is buggy
-statement = _{ if_statement | declaration | return_statement  | expression }
+statement = _{ if_statement | declaration | return_statement | while_statement | expression }
     return_statement = { "return" ~ expression }
     declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expression }
     if_statement = {
@@ -11,6 +11,7 @@ statement = _{ if_statement | declaration | return_statement  | expression }
         ~ (("else" ~ (("{" ~ statement* ~ "}") | statement))
         | ("else" ~ "if" ~ if_statement))?
     }
+    while_statement = { "while" ~ "(" ~ expression ~ ")" ~ (("{" ~ statement* ~ "}") | statement) }
 expression = _{ ((value ~ operator ~ value) | value) ~ ";"? } // FIXME: semicolon
 
 // identifiers
