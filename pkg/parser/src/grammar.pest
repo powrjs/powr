@@ -10,6 +10,7 @@ declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expre
 
 // identifiers
 identifier = ${ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
+keyword = _{ "return" | "const" | "let" | "var" | "function" }
 
 // punctuators
 operator = _{ binary_operator | assignment_operator }
@@ -18,7 +19,7 @@ operator = _{ binary_operator | assignment_operator }
 assignment_operator = { "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" | "**=" }
 
 // values
-value = _{ boolean | number | string | object | function | nullish | regex | identifier | array }
+value = _{ boolean | number | string | object | function | nullish | regex | keyword | identifier | array }
     boolean = { "true" | "false" }
     nullish = { null | undefined }
         null = { "null" }
@@ -37,6 +38,5 @@ value = _{ boolean | number | string | object | function | nullish | regex | ide
         pair = { pair_key ~ ":" ~ value ~ ","? }
         pair_key = _{ string | number | identifier }
     regex = { "/" ~ inner ~ "/" }
-
-function = { "function" ~ identifier? ~ "(" ~ (identifier ~ ("," ~ identifier)?)* ~ ")" ~ ("{" ~ function_body? ~ "}" | function_body?) }
-    function_body = {  statement* }
+    function = { "function" ~ identifier? ~ "(" ~ (identifier ~ ("," ~ identifier)?)* ~ ")" ~ ("{" ~ function_body? ~ "}" | function_body?) }
+        function_body = {  statement* }
