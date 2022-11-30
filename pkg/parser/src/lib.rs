@@ -9,37 +9,60 @@ mod tests {
     use crate::*;
     use pest::Parser;
 
+    fn parse(input: &str) {
+        JavaScriptParser::parse(Rule::program, input).unwrap();
+    }
+
     #[test]
     fn it_works() {
-        JavaScriptParser::parse(Rule::program, "1 + 1;").unwrap();
+        parse("1 + 1;")
     }
 
     #[test]
     fn booleans() {
-        JavaScriptParser::parse(Rule::program, "true;").unwrap();
-        JavaScriptParser::parse(Rule::program, "false;").unwrap();
+        parse("true;");
+        parse("false;");
     }
 
     #[test]
     fn boolean_checking() {
-        JavaScriptParser::parse(Rule::program, "true === true;").unwrap();
-        JavaScriptParser::parse(Rule::program, "true === false;").unwrap();
-        JavaScriptParser::parse(Rule::program, "false === true;").unwrap();
-        JavaScriptParser::parse(Rule::program, "false === false;").unwrap();
+        parse("true == true;");
+        parse("true == false;");
+        parse("false == true;");
+        parse("false == false;");
     }
 
     #[test]
     fn scientific_notation() {
-        JavaScriptParser::parse(Rule::program, "1e-1;").unwrap();
+        parse("1e1;");
+        parse("1e-1;");
+        parse("1e+1;");
+        parse("1e0;");
+        parse("1e-0;");
+        parse("1e+0;");
     }
 
     #[test]
     fn arrays() {
-        JavaScriptParser::parse(Rule::program, "[1, 2, 3];").unwrap();
+        parse("[];");
+        parse("[1];");
+        parse("[1, 2];");
+        parse("[1, 2, 3];");
     }
 
     #[test]
     fn objects() {
-        JavaScriptParser::parse(Rule::program, "({a: 1, b: 2, c: 3});").unwrap();
+        parse("{};");
+        parse("{a: 1};");
+        parse("{a: 1, b: 2};");
+        parse("{a: 1, b: 2, c: 3};");
+        parse("({a: 1, b: 2, c: 3});");
+    }
+
+    #[test]
+    fn functions() {
+        parse("function() {}");
+        parse("function() { return 1; }");
+    }
     }
 }
