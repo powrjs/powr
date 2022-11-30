@@ -8,9 +8,10 @@ the javascript code gets compiled to remove as much cold start interpreting woul
 more or less where the project stands.
 
 - [X] tokenizer/lexer/scanner
-- [ ] parser
+- [ ] parser / grammar (in progress)
+- [ ] AST
 - [ ] transpiler (temporary feature)
-- [ ] LLVM
+- [ ] compiler
 
 ## roadmap
 
