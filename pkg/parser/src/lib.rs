@@ -117,4 +117,9 @@ mod tests {
         parse_rule("1 > 1;", Rule::expression);
         parse_rule("1 >= 1;", Rule::expression);
     }
+
+    #[test]
+    fn new_lines() {
+        parse("function append(a, b) {\nreturn a + b;\n}");
+    }
 }
