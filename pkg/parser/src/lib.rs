@@ -128,4 +128,12 @@ mod tests {
         parse("const sum = (a, b) => a + b;");
         parse("const sum = (a, b) => {\nreturn a + b;\n}");
     }
+
+    #[test]
+    fn if_statements() {
+        parse("if (true) { return 1; }");
+        parse("if (false) { return 1; }");
+        parse("if (true) { return 1; } else { return 2; }");
+        parse("if (true) { return 1; } else if (true) { return 3; } else { return 2; }");
+    }
 }

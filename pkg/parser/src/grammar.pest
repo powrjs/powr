@@ -3,10 +3,15 @@
 WHITESPACE = _{ " " | NEWLINE }
 
 program = { SOI ~ (statement ~ ";"?)* ~ EOI } // FIXME: Everything regarding semicolons is buggy
-statement = _{ declaration | expression | return_statement }
+statement = _{ if_statement | declaration | return_statement  | expression }
     return_statement = { "return" ~ expression }
+    declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expression }
+    if_statement = {
+        "if" ~ "(" ~ expression ~ ")" ~ (("{" ~ statement* ~ "}") | statement)
+        ~ (("else" ~ (("{" ~ statement* ~ "}") | statement))
+        | ("else" ~ "if" ~ if_statement))?
+    }
 expression = _{ ((value ~ operator ~ value) | value) ~ ";"? } // FIXME: semicolon
-declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expression }
 
 // identifiers
 identifier = ${ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
@@ -19,8 +24,9 @@ operator = { binary_operator | assignment_operator }
         bitwise_operator = _{ "&" | "|" | "^" | "<<" | ">>" | ">>>" }
 assignment_operator = _{ "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" | "**=" }
 
-// values
-value = _{ boolean | number | string | object | function | arrow_function | nullish | regex | keyword | identifier | array }
+// literals
+literal = { number | string | boolean | nullish }
+value = _{ literal | object | function | arrow_function | regex | keyword | identifier | array }
     boolean = { "true" | "false" }
     nullish = { null | undefined }
         null = { "null" }
@@ -28,7 +34,7 @@ value = _{ boolean | number | string | object | function | arrow_function | null
     string = { "\"" ~ inner ~ "\"" | "\'" ~ inner ~ "\'" }
         inner = ${ char* }
             char = { !("\"" | "\\") ~ ANY }
-    number = ${
+    number = @{
         "-"?
         ~ ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*)
         ~ ("." ~ ASCII_DIGIT+)?
