@@ -1,7 +1,7 @@
 use pest_derive::Parser;
 
 #[derive(Parser)]
-#[grammar = "javascript.pest"]
+#[grammar = "grammar.pest"]
 struct JavaScriptParser;
 
 #[cfg(test)]
