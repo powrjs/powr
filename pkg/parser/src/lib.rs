@@ -34,13 +34,9 @@ mod tests {
             rule: Rule::program,
             tokens: [
                 program(0, 6, [
-                    literal(0, 1, [
-                        number(0, 1)
-                    ]),
+                    number(0, 1),
                     operator(2, 3),
-                    literal(4, 5, [
-                        number(4, 5)
-                    ]),
+                    number(4, 5),
                     EOI(6, 6)
                 ])
             ]
@@ -55,13 +51,9 @@ mod tests {
             rule: Rule::program,
             tokens: [
                 program(0, 13, [
-                    literal(0, 4, [
-                        boolean(0, 4)
-                    ]),
+                    boolean(0, 4),
                     operator(5, 7),
-                    literal(8, 12, [
-                        boolean(8, 12)
-                    ]),
+                    boolean(8, 12),
                     EOI(13, 13)
                 ])
             ]
@@ -73,13 +65,9 @@ mod tests {
             rule: Rule::program,
             tokens: [
                 program(0, 14, [
-                    literal(0, 4, [
-                        boolean(0, 4)
-                    ]),
+                    boolean(0, 4),
                     operator(5, 7),
-                    literal(8, 13, [
-                        boolean(8, 13)
-                    ]),
+                    boolean(8, 13),
                     EOI(14, 14)
                 ])
             ]
@@ -94,9 +82,7 @@ mod tests {
             rule: Rule::program,
             tokens: [
                 program(0, 4, [
-                    literal(0, 3, [
-                        number(0, 3)
-                    ]),
+                    number(0, 3),
                     EOI(4, 4)
                 ])
             ]
@@ -108,9 +94,7 @@ mod tests {
             rule: Rule::program,
             tokens: [
                 program(0, 5, [
-                    literal(0, 4, [
-                        number(0, 4)
-                    ]),
+                    number(0, 4),
                     EOI(5, 5)
                 ])
             ]
@@ -138,15 +122,9 @@ mod tests {
             tokens: [
                 program(0, 10, [
                     array(0, 9, [
-                        literal(1, 2, [
-                            number(1, 2)
-                        ]),
-                        literal(4, 5, [
-                            number(4, 5)
-                        ]),
-                        literal(7, 8, [
-                            number(7, 8)
-                        ])
+                        number(1, 2),
+                        number(4, 5),
+                        number(7, 8),
                     ]),
                     EOI(10, 10)
                 ])

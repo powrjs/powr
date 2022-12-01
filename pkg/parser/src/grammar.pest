@@ -32,7 +32,7 @@ assignment_operator = _{ "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" 
     postfix_operator = { "++" | "--" }
 
 // literals
-literal = { number | string | boolean | nullish }
+literal = _{ number | string | boolean | nullish }
 value = _{ literal | object | function | arrow_function | regex | keyword | identifier | array }
     boolean = { "true" | "false" }
     nullish = { null | undefined }
