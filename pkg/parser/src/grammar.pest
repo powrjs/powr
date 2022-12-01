@@ -40,7 +40,7 @@ value = _{ literal | object | function | arrow_function | regex | keyword | iden
         undefined = { "undefined" }
     string = { "\"" ~ inner ~ "\"" | "\'" ~ inner ~ "\'" }
         inner = ${ char* }
-            char = { !("\"" | "\\") ~ ANY }
+            char = _{ !("\"" | "\'" | "\\") ~ ANY }
     number = @{
         "-"?
         ~ ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*)
