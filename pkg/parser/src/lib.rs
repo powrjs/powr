@@ -159,6 +159,8 @@ mod tests {
         parse("function() {}");
         parse("function() { return 1; }");
         parse("function sum(a, b) { return a + b; }");
+        parse("const a = function() {}");
+        parse("const sum = function(a, b) { return a + b; }");
     }
 
     #[test]

@@ -17,7 +17,7 @@ statement = _{ if_statement | declaration | return_statement | while_statement |
         for_expression = { declaration ~ expression ~ expression }
     function_statement = { function }
 expression = _{ ((value ~ operator ~ value) | (value ~ postfix_operator) | function_call | value) ~ ";"? } // FIXME: semicolon
-    function_call = { member_expression ~ "(" ~ arguments_call? ~ ")" }
+    function_call = { !"function" ~ member_expression ~ "(" ~ arguments_call? ~ ")" }
 arguments = { identifier ~ ("," ~ identifier)* }
 arguments_call = { expression ~ ("," ~ expression)* }
 
