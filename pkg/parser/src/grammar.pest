@@ -3,17 +3,21 @@
 WHITESPACE = _{ " " | NEWLINE }
 
 program = { SOI ~ (statement ~ ";"?)* ~ EOI } // FIXME: Everything regarding semicolons is buggy
-statement = _{ if_statement | declaration | return_statement | while_statement | expression }
+statement = _{ if_statement | declaration | return_statement | while_statement | for_statement | expression }
     return_statement = { "return" ~ expression }
-    declaration = { ("const" | "let" | "var")? ~ value ~ assignment_operator ~ expression }
+    declaration = { declaration_type? ~ identifier ~ assignment_operator ~ expression }
+        declaration_type = { "const" | "let" | "var" }
     if_statement = {
         "if" ~ "(" ~ expression ~ ")" ~ (("{" ~ statement* ~ "}") | statement)
         ~ (("else" ~ (("{" ~ statement* ~ "}") | statement))
         | ("else" ~ "if" ~ if_statement))?
     }
     while_statement = { "while" ~ "(" ~ expression ~ ")" ~ (("{" ~ statement* ~ "}") | statement) }
-expression = _{ ((value ~ operator ~ value) | value) ~ ";"? } // FIXME: semicolon
-arguments = { expression ~ ("," ~ expression)* }
+    for_statement = { "for" ~ "(" ~ for_expression ~ ")" ~ (("{" ~ statement* ~ "}") | statement) }
+        for_expression = { declaration ~ expression ~ expression }
+expression = _{ ((value ~ operator ~ value) | (value ~ postfix_operator) | value) ~ ";"? } // FIXME: semicolon
+arguments = { identifier ~ ("," ~ identifier)* }
+arguments_call = { expression ~ ("," ~ expression)* }
 
 // identifiers
 identifier = ${ (ASCII_ALPHA | "_" | "$") ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
@@ -25,6 +29,7 @@ operator = { binary_operator | assignment_operator }
     binary_operator = _{ bitwise_operator | "+" | "-" | "*" | "/" | "%" | "**" | "==" | "!=" | "===" | "!==" | "<" | "<=" | ">" | ">=" | "&&" | "||" }
         bitwise_operator = _{ "&" | "|" | "^" | "<<" | ">>" | ">>>" }
 assignment_operator = _{ "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=" | "**=" }
+    postfix_operator = { "++" | "--" }
 
 // literals
 literal = { number | string | boolean | nullish }

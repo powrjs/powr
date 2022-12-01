@@ -141,4 +141,9 @@ mod tests {
     fn do_statement() {
         parse("while (true) { return 1; }");
     }
+
+    #[test]
+    fn for_statement() {
+        parse("for (let i = 0; i < 10; i++) { return 1; }");
+    }
 }
