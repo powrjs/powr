@@ -7,7 +7,7 @@ struct JavaScriptParser;
 #[cfg(test)]
 mod tests {
     use crate::*;
-    use pest::Parser;
+    use pest::{consumes_to, parses_to, Parser};
 
     fn parse(input: &str) {
         JavaScriptParser::parse(Rule::program, input).unwrap();
@@ -19,7 +19,23 @@ mod tests {
 
     #[test]
     fn it_works() {
-        parse("1 + 1;")
+        parses_to! {
+            parser: JavaScriptParser,
+            input: "1 + 1;",
+            rule: Rule::program,
+            tokens: [
+                program(0, 6, [
+                    literal(0, 1, [
+                        number(0, 1)
+                    ]),
+                    operator(2, 3),
+                    literal(4, 5, [
+                        number(4, 5)
+                    ]),
+                    EOI(6, 6)
+                ])
+            ]
+        }
     }
 
     #[test]
