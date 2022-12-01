@@ -26,11 +26,24 @@ mod tests {
             .collect()
     }
 
+    fn expected_string(input: &str, rest: Vec<&str>) -> Vec<String> {
+        let mut expected = vec![input.to_string()];
+        expected.extend(rest.iter().map(|s| s.to_string()));
+        expected.extend(vec!["".to_string()]);
+        expected
+    }
+
     #[test]
     fn it_works() {
+        let code = "1 + 1;";
+        assert_eq!(
+            expected_string(code, vec!["1", "+", "1"]),
+            extract_strings(parse(code))
+        );
+
         parses_to! {
             parser: JavaScriptParser,
-            input: "1 + 1;",
+            input: code,
             rule: Rule::program,
             tokens: [
                 program(0, 6, [
