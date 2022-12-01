@@ -237,4 +237,23 @@ mod tests {
     fn for_statement() {
         parse("for (let i = 0; i < 10; i++) { return 1; }");
     }
+
+    #[test]
+    fn member_expression() {
+        parse("foo.bar");
+        parse("foo.bar.baz");
+        parse("foo[bar]");
+        parse("foo[bar][baz]");
+        parse("foo[bar].baz");
+        parse("foo.bar[baz]");
+        parse("foo['bar'].baz");
+    }
+
+    #[test]
+    fn call_expression() {
+        parse("foo()");
+        parse("foo(bar)");
+        parse("foo(bar, baz)");
+        parse("foo(bar, baz, qux)");
+    }
 }

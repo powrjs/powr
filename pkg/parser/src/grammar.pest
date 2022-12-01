@@ -3,7 +3,7 @@
 WHITESPACE = _{ " " | NEWLINE }
 
 program = { SOI ~ (statement ~ ";"?)* ~ EOI } // FIXME: Everything regarding semicolons is buggy
-statement = _{ if_statement | declaration | return_statement | while_statement | for_statement | expression }
+statement = _{ if_statement | declaration | return_statement | while_statement | for_statement | function_statement | expression }
     return_statement = { "return" ~ expression }
     declaration = { declaration_type? ~ identifier ~ assignment_operator ~ expression }
         declaration_type = { "const" | "let" | "var" }
@@ -15,12 +15,16 @@ statement = _{ if_statement | declaration | return_statement | while_statement |
     while_statement = { "while" ~ "(" ~ expression ~ ")" ~ (("{" ~ statement* ~ "}") | statement) }
     for_statement = { "for" ~ "(" ~ for_expression ~ ")" ~ (("{" ~ statement* ~ "}") | statement) }
         for_expression = { declaration ~ expression ~ expression }
-expression = _{ ((value ~ operator ~ value) | (value ~ postfix_operator) | value) ~ ";"? } // FIXME: semicolon
+    function_statement = { function }
+expression = _{ ((value ~ operator ~ value) | (value ~ postfix_operator) | function_call | value) ~ ";"? } // FIXME: semicolon
+    function_call = { member_expression ~ "(" ~ arguments_call? ~ ")" }
 arguments = { identifier ~ ("," ~ identifier)* }
 arguments_call = { expression ~ ("," ~ expression)* }
 
 // identifiers
-identifier = ${ (ASCII_ALPHA | "_" | "$") ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
+member_expression = ${ identifier ~ (("." ~ identifier) | key_access | ASCII_DIGIT)* }
+    identifier = @{ (ASCII_ALPHA | "_" | "$") ~ (ASCII_ALPHANUMERIC | "_" | "$")* }
+    key_access = { "[" ~ expression ~ "]" }
 // ignores keywords
 keyword = _{ "return" | "const" | "let" | "var" | "function" }
 
@@ -33,7 +37,7 @@ assignment_operator = _{ "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" 
 
 // literals
 literal = _{ number | string | boolean | nullish }
-value = _{ literal | object | function | arrow_function | regex | keyword | identifier | array }
+value = _{ literal | object | function | arrow_function | regex | keyword | member_expression | array }
     boolean = { "true" | "false" }
     nullish = { null | undefined }
         null = { "null" }
