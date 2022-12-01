@@ -19,9 +19,16 @@ fn main() {
         .create_jit_execution_engine(inkwell::OptimizationLevel::None)
         .unwrap();
 
-    let code = r"
-        10 + 30
-    ";
+    let args = std::env::args().collect::<Vec<String>>();
+
+    if args.len() < 2 {
+        eprintln!("Usage: {} <javascript code>", args[0]);
+        exit(1);
+    }
+
+    let code = &args[1];
+    let code = code.as_str();
+
     let text_info = SourceTextInfo::new(code.into());
     let parsed = parse_script(ParseParams {
         specifier: "file:///foo/bar.ts".into(),
