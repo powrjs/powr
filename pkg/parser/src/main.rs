@@ -15,7 +15,7 @@ fn main() {
         exit(1);
     }
 
-    println!("{:#?}", JavaScriptParser::parse(Rule::program, &args[1]));
+    println!("{:#?}\n", JavaScriptParser::parse(Rule::program, &args[1]));
     parse_code(&args[1]);
 }
 
