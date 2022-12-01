@@ -39,35 +39,110 @@ mod tests {
     }
 
     #[test]
-    fn booleans() {
-        parse("true;");
-        parse("false;");
-    }
-
-    #[test]
     fn boolean_checking() {
-        parse("true == true;");
-        parse("true == false;");
-        parse("false == true;");
-        parse("false == false;");
+        parses_to! {
+            parser: JavaScriptParser,
+            input: "true == true;",
+            rule: Rule::program,
+            tokens: [
+                program(0, 13, [
+                    literal(0, 4, [
+                        boolean(0, 4)
+                    ]),
+                    operator(5, 7),
+                    literal(8, 12, [
+                        boolean(8, 12)
+                    ]),
+                    EOI(13, 13)
+                ])
+            ]
+        }
+
+        parses_to! {
+            parser: JavaScriptParser,
+            input: "true == false;",
+            rule: Rule::program,
+            tokens: [
+                program(0, 14, [
+                    literal(0, 4, [
+                        boolean(0, 4)
+                    ]),
+                    operator(5, 7),
+                    literal(8, 13, [
+                        boolean(8, 13)
+                    ]),
+                    EOI(14, 14)
+                ])
+            ]
+        }
     }
 
     #[test]
     fn scientific_notation() {
-        parse("1e1;");
-        parse("1e-1;");
-        parse("1e+1;");
-        parse("1e0;");
-        parse("1e-0;");
-        parse("1e+0;");
+        parses_to! {
+            parser: JavaScriptParser,
+            input: "1e1;",
+            rule: Rule::program,
+            tokens: [
+                program(0, 4, [
+                    literal(0, 3, [
+                        number(0, 3)
+                    ]),
+                    EOI(4, 4)
+                ])
+            ]
+        }
+
+        parses_to! {
+            parser: JavaScriptParser,
+            input: "1e-1;",
+            rule: Rule::program,
+            tokens: [
+                program(0, 5, [
+                    literal(0, 4, [
+                        number(0, 4)
+                    ]),
+                    EOI(5, 5)
+                ])
+            ]
+        }
     }
 
     #[test]
     fn arrays() {
-        parse("[];");
-        parse("[1];");
-        parse("[1, 2];");
-        parse("[1, 2, 3];");
+        parses_to! {
+            parser: JavaScriptParser,
+            input: "[];",
+            rule: Rule::program,
+            tokens: [
+                program(0, 3, [
+                    array(0, 2, []),
+                    EOI(3, 3)
+                ])
+            ]
+        }
+
+        parses_to! {
+            parser: JavaScriptParser,
+            input: "[1, 2, 3];",
+            rule: Rule::program,
+            tokens: [
+                program(0, 10, [
+                    array(0, 9, [
+                        literal(1, 2, [
+                            number(1, 2)
+                        ]),
+                        literal(4, 5, [
+                            number(4, 5)
+                        ]),
+                        literal(7, 8, [
+                            number(7, 8)
+                        ])
+                    ]),
+                    EOI(10, 10)
+                ])
+            ]
+        }
     }
 
     #[test]
@@ -77,6 +152,37 @@ mod tests {
         parse("{a: 1, b: 2};");
         parse("{a: 1, b: 2, c: 3};");
         parse("({a: 1, b: 2, c: 3});");
+
+        parses_to! {
+            parser: JavaScriptParser,
+            input: "{a: 1, b: 2, c: 3};",
+            rule: Rule::program,
+            tokens: [
+                program(0, 20, [
+                    object(0, 19, [
+                        pair(1, 6, [
+                            identifier(1, 2),
+                            literal(5, 6, [
+                                number(5, 6)
+                            ])
+                        ]),
+                        pair(8, 13, [
+                            identifier(8, 9),
+                            literal(12, 13, [
+                                number(12, 13)
+                            ])
+                        ]),
+                        pair(15, 20, [
+                            identifier(15, 16),
+                            literal(19, 20, [
+                                number(19, 20)
+                            ])
+                        ])
+                    ]),
+                    EOI(20, 20)
+                ])
+            ]
+        }
     }
 
     #[test]
