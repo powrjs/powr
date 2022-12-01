@@ -1,6 +1,7 @@
 use pest::Parser;
 use pest_derive::Parser;
 use process::exit;
+use std::fs::read_to_string;
 use std::{env, process};
 
 #[derive(Parser)]
@@ -10,23 +11,42 @@ struct JavaScriptParser;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() != 2 {
-        println!("Usage: {} [javascript code]", args[0]);
-        exit(1);
+    if args.len() != 3 {
+        usage(&args[0]);
     }
 
-    println!("{:#?}\n", JavaScriptParser::parse(Rule::program, &args[1]));
-    parse_code(&args[1]);
+    match args[1].as_str() {
+        "str" | "s" => parse_code(&args[2]),
+        "file" | "f" => parse_file(&args[2]),
+        _ => usage(&args[0]),
+    }
+}
+
+fn usage(program: &str) {
+    println!("Usage:");
+    println!("\t{} [str|s] [javascript code]", program);
+    println!("\t{} [file|f] [javascript file]", program);
+    exit(1);
+}
+
+fn parse_file(file_path: &str) {
+    let file = read_to_string(file_path).unwrap();
+    parse_code(&file);
 }
 
 fn parse_code(code: &str) {
     match JavaScriptParser::parse(Rule::program, code) {
         Ok(pairs) => {
             for pair in pairs {
-                println!("Rule: {:?}", pair.as_rule());
-                println!("Text: {}", pair.as_str());
+                println!("Rule:\t{:?}", pair.as_rule());
+                let text = pair
+                    .as_str()
+                    .lines()
+                    .map(|s| format!("\t{}\n", s))
+                    .collect::<String>();
+                println!("Text: {}", text);
+                println!("Guide:\t[rule]: string text");
                 println!();
-                println!("\t[rule]: string text");
 
                 print_inner(pair, 1);
             }
