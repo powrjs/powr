@@ -113,7 +113,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "power-parser"
+name = "powr"
+version = "0.3.0"
+
+[[package]]
+name = "powr-parser"
 version = "0.1.0"
 dependencies = [
  "pest",
@@ -121,7 +125,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "power-tokenizer"
+name = "powr-tokenizer"
 version = "0.3.0"
 
 [[package]]
