@@ -161,37 +161,6 @@ mod tests {
         parse("{a: 1, b: 2};");
         parse("{a: 1, b: 2, c: 3};");
         parse("({a: 1, b: 2, c: 3});");
-
-        parses_to! {
-            parser: JavaScriptParser,
-            input: "{a: 1, b: 2, c: 3};",
-            rule: Rule::program,
-            tokens: [
-                program(0, 20, [
-                    object(0, 19, [
-                        pair(1, 6, [
-                            identifier(1, 2),
-                            literal(5, 6, [
-                                number(5, 6)
-                            ])
-                        ]),
-                        pair(8, 13, [
-                            identifier(8, 9),
-                            literal(12, 13, [
-                                number(12, 13)
-                            ])
-                        ]),
-                        pair(15, 20, [
-                            identifier(15, 16),
-                            literal(19, 20, [
-                                number(19, 20)
-                            ])
-                        ])
-                    ]),
-                    EOI(20, 20)
-                ])
-            ]
-        }
     }
 
     #[test]
