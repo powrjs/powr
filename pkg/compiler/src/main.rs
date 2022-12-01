@@ -1,32 +1,41 @@
-use inkwell::context::Context;
-use inkwell::execution_engine::JitFunction;
+use deno_ast::swc::ast::Stmt;
+use deno_ast::{parse_script, ParseParams, SourceTextInfo};
+use std::process::exit;
+#[allow(unused_imports)]
+use Stmt::*;
 
 fn main() {
-    let ctx = Context::create();
-    let module = ctx.create_module("addition");
-    let number_type = ctx.f64_type();
-    let sum_fn_type = number_type.fn_type(&[number_type.into(), number_type.into()], false);
-    let sum_fn = module.add_function("sum", sum_fn_type, None);
-    let entry = ctx.append_basic_block(sum_fn, "entry");
-    let builder = ctx.create_builder();
-    builder.position_at_end(entry);
+    let code = r"
+        let a = 1;
+        let b = 2;
+        console.log(a + b);
+    ";
+    let text_info = SourceTextInfo::new(code.into());
+    let parsed = parse_script(ParseParams {
+        specifier: "file:///foo/bar.ts".into(),
+        media_type: deno_ast::MediaType::TypeScript,
+        text_info,
+        capture_tokens: true,
+        maybe_syntax: None,
+        scope_analysis: false,
+    });
 
-    let a = sum_fn.get_nth_param(0).unwrap().into_float_value();
-    let b = sum_fn.get_nth_param(1).unwrap().into_float_value();
-    let ret = builder.build_float_add(a, b, "sum");
-    let _return_instruction = builder.build_return(Some(&ret));
+    if parsed.is_err() {
+        let diag = parsed.err().unwrap();
+        eprintln!("{}\n\nExiting now...", diag.message());
+        exit(1);
+    }
 
-    println!("{}", module.print_to_string().to_string());
+    println!("{}\n", code);
+    let parsed = parsed.unwrap();
+    #[allow(unused_variables)]
+    for statement in &parsed.script().body {
+        handle_statement(statement);
+    }
+}
 
-    let execution_engine = module
-        .create_jit_execution_engine(inkwell::OptimizationLevel::None)
-        .unwrap();
-
-    unsafe {
-        type Addition = unsafe extern "C" fn(f64, f64) -> f64;
-        let add: JitFunction<Addition> = execution_engine.get_function("sum").unwrap();
-	    let (a, b) = (1.0, 2.0);
-        let result = add.call(a, b);
-        assert_eq!(result, a + b);
+fn handle_statement(statement: &Stmt) {
+    match statement {
+        rest => println!("{:#?}", rest),
     }
 }
