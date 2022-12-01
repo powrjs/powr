@@ -7,14 +7,23 @@ struct JavaScriptParser;
 #[cfg(test)]
 mod tests {
     use crate::*;
+    use pest::iterators::Pairs;
     use pest::{consumes_to, parses_to, Parser};
 
-    fn parse(input: &str) {
-        JavaScriptParser::parse(Rule::program, input).unwrap();
+    fn parse(input: &str) -> Pairs<Rule> {
+        JavaScriptParser::parse(Rule::program, input).unwrap()
     }
 
     fn parse_rule(input: &str, rule: Rule) {
         JavaScriptParser::parse(rule, input).unwrap();
+    }
+
+    #[allow(dead_code)]
+    fn extract_strings(pairs: Pairs<Rule>) -> Vec<String> {
+        pairs
+            .flatten()
+            .map(|pair| pair.as_str().to_string())
+            .collect()
     }
 
     #[test]
