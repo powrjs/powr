@@ -115,10 +115,24 @@ dependencies = [
 [[package]]
 name = "powr"
 version = "0.3.0"
+dependencies = [
+ "powr-parser 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "powr-tokenizer 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "powr-parser"
-version = "0.1.0"
+version = "0.0.1"
+dependencies = [
+ "pest",
+ "pest_derive",
+]
+
+[[package]]
+name = "powr-parser"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f25f676304b269377a9a3948427fb7b0fbde71b6615b882de91474bf1917354c"
 dependencies = [
  "pest",
  "pest_derive",
@@ -127,6 +141,12 @@ dependencies = [
 [[package]]
 name = "powr-tokenizer"
 version = "0.3.0"
+
+[[package]]
+name = "powr-tokenizer"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7535a250a0b970f4770fa9a03e84d2c7cea1ca2ffa4f56a33a59b32138a9667e"
 
 [[package]]
 name = "proc-macro2"
