@@ -1,5 +1,5 @@
 [package]
-name = "power-tokenizer"
+name = "powr-tokenizer"
 description = "converts JS/TS code into tokens. part of the power project."
 authors = ["Max Power <alex@alexaa.dev>"]
 repository = "https://github.com/minsk-dev/power"

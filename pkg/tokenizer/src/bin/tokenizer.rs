@@ -1,6 +1,6 @@
 use std::{env, process};
 
-use power_tokenizer::Tokenizer;
+use powr_tokenizer::Tokenizer;
 
 fn main() {
     let args: Vec<String> = env::args().collect();

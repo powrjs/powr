@@ -1,5 +1,5 @@
 [package]
-name = "power-parser"
+name = "powr-parser"
 description = "parses tokens into AST. part of the power project"
 version = "0.1.0"
 authors = ["Max Power <alex@alexaa.dev>"]
