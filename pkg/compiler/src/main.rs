@@ -5,6 +5,7 @@ use inkwell::builder::Builder;
 use inkwell::context::Context;
 use inkwell::execution_engine;
 use inkwell::module::Module;
+use inkwell::values::FunctionValue;
 use std::process::exit;
 #[allow(unused_imports)]
 use Stmt::*;
@@ -50,10 +51,20 @@ fn main() {
     let entry = ctx.append_basic_block(function, "entry");
     builder.position_at_end(entry);
 
+    let i32_type = ctx.i32_type();
+    let printf_type = i32_type.fn_type(
+        &[ctx
+            .i8_type()
+            .ptr_type(inkwell::AddressSpace::Generic)
+            .into()],
+        true,
+    );
+    let printf = module.add_function("printf", printf_type, None);
+
     let parsed = parsed.unwrap();
     #[allow(unused_variables)]
     for statement in &parsed.script().body {
-        handle_statement(statement, &ctx, &module, &builder, &engine);
+        handle_statement(statement, &ctx, &module, &builder, &engine, printf);
     }
 
     builder.build_return(Some(&ctx.i32_type().const_int(0, false)));
@@ -67,10 +78,46 @@ fn handle_statement(
     _module: &Module,
     builder: &Builder,
     _engine: &ExecutionEngine,
+    printf: FunctionValue,
 ) {
     match statement {
         Expr(expr) => {
             let expr = &expr.expr;
+
+            if let Some(call) = expr.as_call() {
+                let callee = &call.callee;
+                let callee = (&callee).as_expr().unwrap();
+                let callee = callee.as_member().unwrap();
+                let console = callee.obj.as_ident().unwrap();
+                let log = callee.prop.as_ident().unwrap();
+
+                let console = console.sym.to_string();
+                let log = log.sym.to_string();
+
+                if console == "console".to_string() && log == "log".to_string() {
+                    let args = &call.args;
+
+                    for arg in args {
+                        let arg = arg.expr.as_lit().unwrap();
+                        let arg = match arg {
+                            Lit::Str(string) => string,
+                            _ => unimplemented!("Only string literals are supported"),
+                        };
+
+                        let arg = format!("{}\n", arg.value);
+                        let message = unsafe { builder.build_global_string(&arg, "consolelog") };
+                        let message_bit_cast = builder.build_bitcast(
+                            message,
+                            ctx.i8_type().ptr_type(inkwell::AddressSpace::Generic),
+                            "message_bit_cast",
+                        );
+
+                        builder.build_call(printf, &[message_bit_cast.into()], "callprintf");
+                    }
+                }
+
+                return;
+            }
 
             // assumes it's a binary expression
             let bin_expr = expr.as_bin().unwrap();
