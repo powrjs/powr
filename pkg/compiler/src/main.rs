@@ -5,10 +5,27 @@ use inkwell::builder::Builder;
 use inkwell::context::Context;
 use inkwell::execution_engine;
 use inkwell::module::Module;
-use inkwell::values::FunctionValue;
+use inkwell::values::{FunctionValue, PointerValue};
+use std::collections::HashMap;
 use std::process::exit;
 #[allow(unused_imports)]
 use Stmt::*;
+
+pub struct Compiler<'a, 'ctx> {
+    pub context: &'a Context,
+    pub builder: &'a Builder<'ctx>,
+    pub module: &'a Module<'ctx>,
+
+    variables: HashMap<String, PointerValue<'ctx>>,
+    main_fn: Option<FunctionValue<'ctx>>,
+}
+
+impl<'a, 'ctx> Compiler<'a, 'ctx> {
+    #[inline]
+    fn main_fn(&self) -> FunctionValue<'ctx> {
+        self.main_fn.unwrap()
+    }
+}
 
 fn main() {
     let ctx = Context::create();
