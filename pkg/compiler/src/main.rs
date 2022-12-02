@@ -45,6 +45,12 @@ fn main() {
         exit(1);
     }
 
+    let void = ctx.void_type();
+    let fn_type = void.fn_type(&[], false);
+    let function = module.add_function("main", fn_type, None);
+    let entry = ctx.append_basic_block(function, "entry");
+    builder.position_at_end(entry);
+
     println!("{}\n", code);
     let parsed = parsed.unwrap();
     #[allow(unused_variables)]
@@ -52,19 +58,20 @@ fn main() {
         handle_statement(statement, &ctx, &module, &builder, &engine);
     }
 
+    builder.build_return(Some(&ctx.i32_type().const_int(0, false)));
+
     println!("\n\n{}", &module.print_to_string().to_string());
 }
 
 fn handle_statement(
     statement: &Stmt,
     ctx: &Context,
-    module: &Module,
+    _module: &Module,
     builder: &Builder,
-    engine: &ExecutionEngine,
+    _engine: &ExecutionEngine,
 ) {
     match statement {
         Expr(expr) => {
-            let expr = expr.clone();
             let expr = &expr.expr;
 
             // assumes it's a binary expression
@@ -93,6 +100,30 @@ fn handle_statement(
                     println!("JS Value: {}", result.get_constant().unwrap().0);
                 }
                 _ => unreachable!("only addition is supported"),
+            }
+        }
+        Decl(decl) => {
+            // assumes it's a variable declaration
+            let var = decl.as_var().unwrap();
+            let kind = var.kind;
+            let declarations = &var.decls;
+
+            for declaration in declarations {
+                let identifier = declaration.name.as_ident().unwrap();
+                let name = identifier.sym.to_string();
+                let init = declaration.init.as_ref().unwrap();
+                let init = init.as_lit().unwrap();
+                let init = match init {
+                    Lit::Num(num) => num.value,
+                    _ => unreachable!("init is not a number"),
+                };
+
+                println!("{} {} = {};", kind.to_string(), name, init);
+
+                let number_type = ctx.f64_type();
+                let number = number_type.const_float(init);
+                let number_ptr = builder.build_alloca(number_type, &name);
+                let _ = builder.build_store(number_ptr, number);
             }
         }
         _ => {}
