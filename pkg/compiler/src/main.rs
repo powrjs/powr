@@ -5,7 +5,6 @@ use inkwell::builder::Builder;
 use inkwell::context::Context;
 use inkwell::execution_engine;
 use inkwell::module::Module;
-use inkwell::values::AnyValue;
 use std::process::exit;
 #[allow(unused_imports)]
 use Stmt::*;
@@ -51,7 +50,6 @@ fn main() {
     let entry = ctx.append_basic_block(function, "entry");
     builder.position_at_end(entry);
 
-    println!("{}\n", code);
     let parsed = parsed.unwrap();
     #[allow(unused_variables)]
     for statement in &parsed.script().body {
@@ -60,7 +58,6 @@ fn main() {
 
     builder.build_return(Some(&ctx.i32_type().const_int(0, false)));
 
-    println!("\n\n{}", &module.print_to_string().to_string());
 }
 
 fn handle_statement(
@@ -94,18 +91,15 @@ fn handle_statement(
                 BinaryOp::Add => {
                     let lhs = ctx.f64_type().const_float(lhs);
                     let rhs = ctx.f64_type().const_float(rhs);
-                    let result = builder.build_float_add(lhs, rhs, "add_result");
-
-                    println!("Result: {}", result.print_to_string().to_string());
-                    println!("JS Value: {}", result.get_constant().unwrap().0);
+                    let _result = builder.build_float_add(lhs, rhs, "add_result");
                 }
-                _ => unreachable!("only addition is supported"),
+                _ => unimplemented!("only addition is supported"),
             }
         }
         Decl(decl) => {
             // assumes it's a variable declaration
             let var = decl.as_var().unwrap();
-            let kind = var.kind;
+            let _kind = var.kind;
             let declarations = &var.decls;
 
             for declaration in declarations {
@@ -115,10 +109,8 @@ fn handle_statement(
                 let init = init.as_lit().unwrap();
                 let init = match init {
                     Lit::Num(num) => num.value,
-                    _ => unreachable!("init is not a number"),
+                    _ => unimplemented!("init is not a number"),
                 };
-
-                println!("{} {} = {};", kind.to_string(), name, init);
 
                 let number_type = ctx.f64_type();
                 let number = number_type.const_float(init);
