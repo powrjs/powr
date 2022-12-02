@@ -15,7 +15,7 @@ fn main() {
     let module = ctx.create_module(module_name);
     let builder = ctx.create_builder();
     let engine = module
-        .create_jit_execution_engine(inkwell::OptimizationLevel::None)
+        .create_jit_execution_engine(inkwell::OptimizationLevel::Aggressive)
         .unwrap();
 
     let args = std::env::args().collect::<Vec<String>>();
