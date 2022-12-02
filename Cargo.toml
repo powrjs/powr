@@ -1,7 +1,5 @@
 [workspace]
 members = [
     "pkg/compiler",
-    "pkg/tokenizer",
-    "pkg/parser",
     "pkg/powr",
 ]
