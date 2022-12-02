@@ -58,6 +58,7 @@ fn main() {
 
     builder.build_return(Some(&ctx.i32_type().const_int(0, false)));
 
+    module.print_to_file("compiled.ll").unwrap();
 }
 
 fn handle_statement(
