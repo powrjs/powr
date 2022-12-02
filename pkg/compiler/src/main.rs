@@ -44,8 +44,8 @@ fn main() {
         exit(1);
     }
 
-    let void = ctx.void_type();
-    let fn_type = void.fn_type(&[], false);
+    let i32_type = ctx.i32_type();
+    let fn_type = i32_type.fn_type(&[], false);
     let function = module.add_function("main", fn_type, None);
     let entry = ctx.append_basic_block(function, "entry");
     builder.position_at_end(entry);
