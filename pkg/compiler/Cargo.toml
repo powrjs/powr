@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 deno_ast = { version = "0.21.0", features = ["transforms", "visit", "typescript"] }
-inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0"] }
+inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0", "default", "internal-getters"] }
