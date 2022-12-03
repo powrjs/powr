@@ -14,6 +14,9 @@ fn main() {
 
     let context = Context::create();
     let mut compiler = Compiler::new(&context);
+    compiler
+        .compile_main_function()
+        .expect("Should be able to compile main function");
     match compiler.compile(parsed_script.unwrap().program_ref()) {
         Ok(_) => println!("Compiled successfully to './script'"), // TODO: make this configurable
         Err(err) => {
