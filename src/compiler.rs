@@ -156,7 +156,7 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
         }
     }
 
-    fn compile_expression(&self, expression: &Expr) -> Result<AnyValueEnum, CompilerError> {
+    fn compile_expression(&self, expression: &Expr) -> Result<AnyValueEnum<'ctx>, CompilerError> {
         match expression {
             Expr::Call(call) => self.compile_call_expression(call),
             Expr::Member(member) => self.compile_member_expression(member),
@@ -172,7 +172,7 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
     fn compile_call_expression(
         &self,
         call_expression: &CallExpr,
-    ) -> Result<AnyValueEnum, CompilerError> {
+    ) -> Result<AnyValueEnum<'ctx>, CompilerError> {
         let callee = &call_expression.callee;
         let callee = match callee {
             Callee::Expr(expr) => self.compile_expression(expr),
@@ -231,7 +231,7 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
     fn compile_member_expression(
         &self,
         member_expression: &MemberExpr,
-    ) -> Result<AnyValueEnum, CompilerError> {
+    ) -> Result<AnyValueEnum<'ctx>, CompilerError> {
         // TODO: should not be hardcoded
         // let object = self.compile_expression(member_expression.obj.as_ref())?;
 
@@ -259,7 +259,7 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
             message: "Unsupported expression".to_string(),
         })
     }
-    fn compile_literal(&self, literal: &Lit) -> Result<AnyValueEnum, CompilerError> {
+    fn compile_literal(&self, literal: &Lit) -> Result<AnyValueEnum<'ctx>, CompilerError> {
         match literal {
             Lit::Str(string) => {
                 // TODO: see if we can use the string directly
