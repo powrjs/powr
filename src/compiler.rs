@@ -46,6 +46,7 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
         let main_fn = self.module.add_function("main", fn_type, None);
         let entry = self.context.append_basic_block(main_fn, "entry");
         self.builder.position_at_end(entry);
+        self.main_fn = Some(main_fn);
 
         Ok(())
     }
