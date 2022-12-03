@@ -29,7 +29,7 @@ pub struct Compiler<'a, 'ctx> {
     main_fn: Option<FunctionValue<'ctx>>,
 }
 
-impl<'a, 'ctx> Compiler<'a, 'ctx> {
+impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
     pub fn new(context: &'a Context, module: &'a Module<'ctx>, builder: &'a Builder<'ctx>) -> Self {
         Self {
             context,
