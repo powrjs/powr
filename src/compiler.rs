@@ -46,6 +46,7 @@ struct Variable<'ctx> {
     kind: VariableKind,
 }
 
+pub(crate) struct Compiler<'a, 'ctx> {
     context: &'a Context,
     module: Module<'ctx>,
     builder: Builder<'ctx>,
