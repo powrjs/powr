@@ -19,8 +19,8 @@ impl Error for CompilerError {}
 
 pub struct Compiler<'a, 'ctx> {
     pub context: &'a Context,
-    pub module: Module<'ctx>,
-    pub builder: Builder<'ctx>,
+    pub module: &'a Module<'ctx>,
+    pub builder: &'a Builder<'ctx>,
 
     variables: HashMap<String, PointerValue<'ctx>>,
     main_fn: Option<FunctionValue<'ctx>>,
@@ -30,5 +30,15 @@ impl<'a, 'ctx> Compiler<'a, 'ctx> {
     #[inline]
     fn main_fn(&self) -> FunctionValue<'ctx> {
         self.main_fn.unwrap()
+    }
+
+    pub fn new(context: &'a Context, module: &'a Module<'ctx>, builder: &'a Builder<'ctx>) -> Self {
+        Self {
+            context,
+            module,
+            builder,
+            variables: HashMap::new(),
+            main_fn: None,
+        }
     }
 }
