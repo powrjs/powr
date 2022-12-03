@@ -303,7 +303,7 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
             self.add_variable(name, init.into_pointer_value(), kind);
         }
 
-        exit(0);
+        Ok(())
     }
 
     fn compile_pattern(&self, pattern: &Pat) -> Result<String, CompilerError> {
