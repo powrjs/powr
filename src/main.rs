@@ -1,0 +1,3 @@
+mod compiler;
+
+fn main() {}
