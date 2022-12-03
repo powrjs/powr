@@ -21,9 +21,9 @@ impl Display for CompilerError {
 impl Error for CompilerError {}
 
 pub struct Compiler<'a, 'ctx> {
-    pub context: &'a Context,
-    pub module: &'a Module<'ctx>,
-    pub builder: &'a Builder<'ctx>,
+    context: &'a Context,
+    module: &'a Module<'ctx>,
+    builder: &'a Builder<'ctx>,
 
     variables: HashMap<String, PointerValue<'ctx>>,
     main_fn: Option<FunctionValue<'ctx>>,
