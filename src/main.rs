@@ -1,6 +1,7 @@
 use compiler::Compiler;
 use deno_ast::{parse_script, Diagnostic, ParseParams, ParsedSource, SourceTextInfo};
 use inkwell::context::Context;
+use std::env::args;
 use std::process::exit;
 
 mod compiler;
@@ -14,24 +15,37 @@ fn main() {
 
     let context = Context::create();
     let mut compiler = Compiler::new(&context);
+
     compiler
         .compile_main_function()
         .expect("Should be able to compile main function");
+
     match compiler.compile(parsed_script.unwrap().program_ref()) {
-        Ok(_) => println!("Compiled successfully to './script'"), // TODO: make this configurable
+        Ok(_) => {}
         Err(err) => {
             eprintln!("Failed to compile script: {:?}", err);
+            exit(1);
+        }
+    }
+
+    // TODO: use regex
+    let file = get_file_path().replace(".js", ".ll").replace(".ts", ".ll");
+    match compiler.write_to_file(&file) {
+        Ok(_) => println!("Compiled successfully to '{}'", file), // TODO: make this configurable
+        Err(err) => {
+            eprintln!("Failed to write to file: {:?}", err);
             exit(1);
         }
     }
 }
 
 fn get_parsed_script() -> Result<ParsedSource, Diagnostic> {
+    let file = get_file_path();
     let code = get_code();
     let text_info = SourceTextInfo::new(code.into());
     let parsed_script = parse_script(ParseParams {
-        specifier: "file:///main.ts".into(),         // FIXME
-        media_type: deno_ast::MediaType::TypeScript, // FIXME
+        specifier: format!("file:///{}", file).into(), // FIXME
+        media_type: deno_ast::MediaType::TypeScript,   // FIXME
         text_info,
         capture_tokens: true,
         maybe_syntax: None,
@@ -42,7 +56,7 @@ fn get_parsed_script() -> Result<ParsedSource, Diagnostic> {
 }
 
 fn get_code() -> String {
-    let args: Vec<String> = std::env::args().collect();
+    let args: Vec<String> = args().collect();
     if args.len() != 3 {
         eprintln!("Usage:");
         eprintln!("\t{} [compile|c] [js/ts file]", args[0]);
@@ -68,4 +82,19 @@ fn get_code() -> String {
     };
 
     code
+}
+
+fn get_file_path() -> String {
+    let args: Vec<String> = args().collect();
+    let action = &args[1];
+    let file_or_code = &args[2];
+
+    match action.as_str() {
+        "compile" | "c" => file_or_code.clone(),
+        "run" | "r" => "script.ll".to_string(),
+        _ => {
+            eprintln!("Invalid action: {}", action);
+            exit(1);
+        }
+    }
 }

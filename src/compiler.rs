@@ -40,6 +40,11 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
         }
     }
 
+    pub fn write_to_file(&self, path: &str) -> Result<(), Box<dyn Error>> {
+        self.module.print_to_file(path)?;
+        Ok(())
+    }
+
     #[inline]
     fn main_fn(&self) -> FunctionValue<'ctx> {
         self.main_fn.unwrap()
