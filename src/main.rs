@@ -43,8 +43,9 @@ fn get_parsed_script() -> Result<ParsedSource, Diagnostic> {
 fn get_code() -> String {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 3 {
-        println!("Usage: {} [compile|c] [js/ts file]", args[0]);
-        println!("Usage: {} [run|r] [js/ts code]", args[0]);
+        eprintln!("Usage:");
+        eprintln!("\t{} [compile|c] [js/ts file]", args[0]);
+        eprintln!("\t{} [run|r] [js/ts code]", args[0]);
         exit(1);
     }
 
