@@ -20,21 +20,21 @@ impl Display for CompilerError {
 
 impl Error for CompilerError {}
 
-pub struct Compiler<'a, 'ctx> {
+pub struct Compiler<'a: 'ctx, 'ctx> {
     context: &'a Context,
-    module: &'a Module<'ctx>,
-    builder: &'a Builder<'ctx>,
+    module: Module<'ctx>,
+    builder: Builder<'ctx>,
 
     variables: HashMap<String, PointerValue<'ctx>>,
     main_fn: Option<FunctionValue<'ctx>>,
 }
 
 impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
-    pub fn new(context: &'a Context, module: &'a Module<'ctx>, builder: &'a Builder<'ctx>) -> Self {
+    pub fn new(context: &'a Context) -> Self {
         Self {
             context,
-            module,
-            builder,
+            module: context.create_module("main"),
+            builder: context.create_builder(),
             variables: HashMap::new(),
             main_fn: None,
         }

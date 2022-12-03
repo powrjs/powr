@@ -13,9 +13,7 @@ fn main() {
     }
 
     let context = Context::create();
-    let module = context.create_module("main");
-    let builder = context.create_builder();
-    let mut compiler = Compiler::new(&context, &module, &builder);
+    let mut compiler = Compiler::new(&context);
     match compiler.compile(parsed_script.unwrap().program_ref()) {
         Ok(_) => println!("Compiled successfully to './script'"), // TODO: make this configurable
         Err(err) => {
