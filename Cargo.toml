@@ -10,4 +10,4 @@ license = "SSPL-1.0"
 
 [dependencies]
 deno_ast = { version = "0.21.0", features = ["transforms", "visit", "typescript"] }
-inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0", "default", "internal-getters"] }
+inkwell = { git = "https://github.com/TheDan64/inkwell", rev = "f6945b70ca735967aa2a01f8a4a02656296aaab5", features = ["llvm14-0", "default", "internal-getters"] }
