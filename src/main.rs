@@ -1,9 +1,11 @@
+use crate::backend_runner::{link_to_binary, link_to_obj};
 use compiler::Compiler;
 use deno_ast::{parse_script, Diagnostic, ParseParams, ParsedSource, SourceTextInfo};
 use inkwell::context::Context;
 use std::env::args;
 use std::process::exit;
 
+mod backend_runner;
 mod compiler;
 
 fn main() {
@@ -37,6 +39,9 @@ fn main() {
             exit(1);
         }
     }
+
+    link_to_obj(&file);
+    link_to_binary(&file);
 }
 
 fn get_parsed_script() -> Result<ParsedSource, Diagnostic> {
@@ -86,6 +91,13 @@ fn get_code() -> String {
 
 fn get_file_path() -> String {
     let args: Vec<String> = args().collect();
+    if args.len() != 3 {
+        eprintln!("Usage:");
+        eprintln!("\t{} [compile|c] [js/ts file]", args[0]);
+        eprintln!("\t{} [run|r] [js/ts code]", args[0]);
+        exit(1);
+    }
+
     let action = &args[1];
     let file_or_code = &args[2];
 
