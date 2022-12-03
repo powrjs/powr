@@ -1,22 +1,12 @@
 use compiler::Compiler;
-use deno_ast::{parse_script, ParseParams, SourceTextInfo};
+use deno_ast::{parse_script, Diagnostic, ParseParams, ParsedSource, SourceTextInfo};
 use inkwell::context::Context;
 use std::process::exit;
 
 mod compiler;
 
 fn main() {
-    let code = get_code();
-    let text_info = SourceTextInfo::new(code.into());
-    let parsed_script = parse_script(ParseParams {
-        specifier: "file:///main.ts".into(),         // FIXME
-        media_type: deno_ast::MediaType::TypeScript, // FIXME
-        text_info,
-        capture_tokens: true,
-        maybe_syntax: None,
-        scope_analysis: true,
-    });
-
+    let parsed_script = get_parsed_script();
     if parsed_script.is_err() {
         eprintln!("Failed to parse script: \n{:?}", parsed_script);
         exit(1);
@@ -33,6 +23,21 @@ fn main() {
             exit(1);
         }
     }
+}
+
+fn get_parsed_script() -> Result<ParsedSource, Diagnostic> {
+    let code = get_code();
+    let text_info = SourceTextInfo::new(code.into());
+    let parsed_script = parse_script(ParseParams {
+        specifier: "file:///main.ts".into(),         // FIXME
+        media_type: deno_ast::MediaType::TypeScript, // FIXME
+        text_info,
+        capture_tokens: true,
+        maybe_syntax: None,
+        scope_analysis: true,
+    });
+
+    parsed_script
 }
 
 fn get_code() -> String {
