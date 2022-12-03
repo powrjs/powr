@@ -40,6 +40,16 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
         }
     }
 
+    pub fn compile_main_function(&mut self) -> Result<(), CompilerError> {
+        let i32_type = self.context.i32_type();
+        let fn_type = i32_type.fn_type(&[], false);
+        let main_fn = self.module.add_function("main", fn_type, None);
+        let entry = self.context.append_basic_block(main_fn, "entry");
+        self.builder.position_at_end(entry);
+
+        Ok(())
+    }
+
     pub fn compile(&mut self, program: &Program) -> Result<(), CompilerError> {
         if self.main_fn.is_none() {
             return Err(CompilerError {
