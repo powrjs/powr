@@ -4,7 +4,7 @@ description = "compile ts/js code into binaries"
 authors = ["Max Power <alex@alexaa.dev>"]
 repository = "https://github.com/powr/powr"
 readme = "README.md"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 license = "SSPL-1.0"
 
