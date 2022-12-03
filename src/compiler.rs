@@ -1,13 +1,15 @@
 use deno_ast::swc::ast::{
-    CallExpr, Callee, Expr, Lit, MemberExpr, ModuleItem, Program, Script, Stmt,
+    CallExpr, Callee, Decl, Expr, Lit, MemberExpr, ModuleItem, Pat, Program, Script, Stmt, VarDecl,
 };
 use inkwell::builder::Builder;
 use inkwell::context::Context;
 use inkwell::module::Module;
 use inkwell::values::{AnyValueEnum, BasicValue, FunctionValue, PointerValue};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
+use std::process::exit;
 
 #[derive(Debug)]
 pub struct CompilerError {
@@ -22,12 +24,33 @@ impl Display for CompilerError {
 
 impl Error for CompilerError {}
 
-pub struct Compiler<'a: 'ctx, 'ctx> {
+enum VariableKind {
+    Const,
+    Let,
+    Var,
+}
+
+impl VariableKind {
+    fn from_string(string: String) -> Self {
+        match string.as_str() {
+            "const" => VariableKind::Const,
+            "let" => VariableKind::Let,
+            "var" => VariableKind::Var,
+            _ => panic!("Invalid variable kind"),
+        }
+    }
+}
+
+struct Variable<'ctx> {
+    pointer: PointerValue<'ctx>,
+    kind: VariableKind,
+}
+
     context: &'a Context,
     module: Module<'ctx>,
     builder: Builder<'ctx>,
 
-    variables: HashMap<String, PointerValue<'ctx>>,
+    variables: RefCell<HashMap<String, Variable<'ctx>>>,
     main_fn: Option<FunctionValue<'ctx>>,
 }
 
@@ -37,9 +60,15 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
             context,
             module: context.create_module("main"),
             builder: context.create_builder(),
-            variables: HashMap::new(),
+            variables: RefCell::new(HashMap::new()),
             main_fn: None,
         }
+    }
+
+    fn add_variable(&self, name: String, pointer: PointerValue<'ctx>, kind: VariableKind) {
+        self.variables
+            .borrow_mut()
+            .insert(name, Variable { pointer, kind });
     }
 
     pub fn write_to_file(&self, path: &str) -> Result<(), Box<dyn Error>> {
@@ -117,6 +146,7 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
     fn compile_statement(&self, statement: &Stmt) -> Result<(), CompilerError> {
         match statement {
             Stmt::Expr(expr) => self.compile_expression(expr.expr.as_ref()).map(|_| ()),
+            Stmt::Decl(decl) => self.compile_declaration(decl),
             _ => {
                 return Err(CompilerError {
                     message: "Unsupported statement".to_string(),
@@ -242,6 +272,48 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
             _ => {
                 return Err(CompilerError {
                     message: "Unsupported literal".to_string(),
+                });
+            }
+        }
+    }
+
+    fn compile_declaration(&self, declaration: &Decl) -> Result<(), CompilerError> {
+        match declaration {
+            Decl::Var(var) => self.compile_variable_declaration(var),
+            _ => {
+                return Err(CompilerError {
+                    message: "Unsupported declaration".to_string(),
+                });
+            }
+        }
+    }
+    fn compile_variable_declaration(
+        &self,
+        variable_declaration: &Box<VarDecl>,
+    ) -> Result<(), CompilerError> {
+        let declarations = &variable_declaration.decls;
+        let kind = &variable_declaration.kind;
+
+        for declaration in declarations {
+            let name = self.compile_pattern(&declaration.name)?;
+            let init = self.compile_expression(&declaration.init.as_ref().unwrap())?;
+
+            let kind = VariableKind::from_string(kind.to_string());
+            self.add_variable(name, init.into_pointer_value(), kind);
+        }
+
+        exit(0);
+    }
+
+    fn compile_pattern(&self, pattern: &Pat) -> Result<String, CompilerError> {
+        match pattern {
+            Pat::Ident(ident) => {
+                let name = ident.sym.to_string();
+                Ok(name)
+            }
+            _ => {
+                return Err(CompilerError {
+                    message: "Unsupported pattern".to_string(),
                 });
             }
         }
