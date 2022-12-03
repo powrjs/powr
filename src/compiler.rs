@@ -40,15 +40,9 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
         }
     }
 
-    pub fn compile_main_function(&mut self) -> Result<(), CompilerError> {
-        let i32_type = self.context.i32_type();
-        let fn_type = i32_type.fn_type(&[], false);
-        let main_fn = self.module.add_function("main", fn_type, None);
-        let entry = self.context.append_basic_block(main_fn, "entry");
-        self.builder.position_at_end(entry);
-        self.main_fn = Some(main_fn);
-
-        Ok(())
+    #[inline]
+    fn main_fn(&self) -> FunctionValue<'ctx> {
+        self.main_fn.unwrap()
     }
 
     pub fn compile(&mut self, program: &Program) -> Result<(), CompilerError> {
@@ -62,6 +56,17 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
             Program::Module(module) => self.compile_module(module)?,
             Program::Script(script) => self.compile_script(script)?,
         }
+
+        Ok(())
+    }
+
+    pub fn compile_main_function(&mut self) -> Result<(), CompilerError> {
+        let i32_type = self.context.i32_type();
+        let fn_type = i32_type.fn_type(&[], false);
+        let main_fn = self.module.add_function("main", fn_type, None);
+        let entry = self.context.append_basic_block(main_fn, "entry");
+        self.builder.position_at_end(entry);
+        self.main_fn = Some(main_fn);
 
         Ok(())
     }
@@ -91,10 +96,5 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
 
     fn compile_statement(&self, statement: &Stmt) -> Result<(), CompilerError> {
         Ok(())
-    }
-
-    #[inline]
-    fn main_fn(&self) -> FunctionValue<'ctx> {
-        self.main_fn.unwrap()
     }
 }
