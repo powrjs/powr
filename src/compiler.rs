@@ -289,6 +289,16 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
 
                 Ok(pointer_value.into())
             }
+            Lit::Bool(boolean) => {
+                let bool_type = self.context.bool_type();
+                let const_bool = bool_type.const_int(boolean.value.into(), false);
+                let pointer_value = self
+                    .builder
+                    .build_alloca(bool_type, &*boolean.value.to_string());
+                self.builder.build_store(pointer_value, const_bool);
+
+                Ok(pointer_value.into())
+            }
             Lit::Null(_) => Ok(self.null_pointer().into()),
             _ => {
                 return Err(CompilerError {
