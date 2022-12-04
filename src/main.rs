@@ -103,8 +103,12 @@ fn get_parsed_script(ctx: &seahorse::Context) -> Result<ParsedSource, Diagnostic
     let code = std::fs::read_to_string(file).expect("Failed to read file");
     let text_info = SourceTextInfo::new(code.into());
     let parsed_script = parse_script(ParseParams {
-        specifier: format!("file:///{}", file).into(), // FIXME
-        media_type: deno_ast::MediaType::TypeScript,   // FIXME
+        specifier: format!("file:///{}", file).into(),
+        media_type: match file {
+            _ if file.ends_with(".js") => deno_ast::MediaType::JavaScript,
+            _ if file.ends_with(".ts") => deno_ast::MediaType::TypeScript,
+            _ => unreachable!(),
+        },
         text_info,
         capture_tokens: true,
         maybe_syntax: None,
