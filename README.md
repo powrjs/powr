@@ -15,6 +15,41 @@ $ ./hello_world
 
 I recommend adding `--jobs [number of jobs]` to the `cargo run` command to speed up compilation.
 
+## usage
+
+section of the output of `powr --help`:
+
+```
+Usage:
+	powr [OPTIONS] [FILE]
+
+Flags:
+	-h, --help : Show help
+
+Commands:
+	c, compile : Compile a TypeScript/JavaScript file
+```
+
+and `powr compile --help`:
+
+```
+Description:
+	Compile a TypeScript/JavaScript file
+
+Usage:
+	powr compile [FILE] [OPTIONS]
+
+Flags:
+	-e, --emmit-llvm  : Emmit LLVM IR
+	-d, --dry-run     : Only emits the LLVM IR
+	-h, --help        : Show help
+
+```
+
+`--emit--llvm` leaves an `.ll` file that corresponds to the `.ts` file.
+
+`--dry-run` outputs what would be emitted to the `.ll` file and exits.
+
 ## license
 
 currently, the project uses [SSPL-1.0](LICENSE). this license will be changed when the project gets to a more usable
