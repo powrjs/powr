@@ -1,0 +1,5 @@
+split data and methods between two hashmaps when adding fields or creating objects
+	+ faster iterations
+	- more complex
+
+	=> object can always have a pointer field that points to their counterpart
