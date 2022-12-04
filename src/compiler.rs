@@ -270,10 +270,7 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
     fn compile_literal(&self, literal: &Lit) -> Result<AnyValueEnum<'ctx>, CompilerError> {
         match literal {
             Lit::Str(string) => {
-                // TODO: see if we can use the string directly
-                // let vector_value = self.context.const_string(string.value.as_bytes(), false);
-                let string_pointer =
-                    unsafe { self.builder.build_global_string(&string.value, "string") };
+                let string_pointer = self.context.const_string((&string.value).as_bytes(), false);
 
                 Ok(string_pointer.as_any_value_enum())
             }
