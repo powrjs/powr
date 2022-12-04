@@ -1,4 +1,5 @@
 use crate::backend_runner::{link_to_binary, link_to_obj, remove_file};
+use crate::middleend_runner::run_opt;
 use compiler::Compiler;
 use deno_ast::{parse_script, Diagnostic, ParseParams, ParsedSource, SourceTextInfo};
 use inkwell::context::Context;
@@ -8,6 +9,7 @@ use std::process::exit;
 
 mod backend_runner;
 mod compiler;
+mod middleend_runner;
 
 fn main() {
     let args: Vec<String> = args().collect();
@@ -79,6 +81,8 @@ fn compile_action(ctx: &seahorse::Context) {
                 exit(1);
             }
         }
+
+        run_opt(&file);
     } else {
         println!("{}", compiler.get_llvm_ir());
         exit(0);
