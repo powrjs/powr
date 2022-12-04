@@ -1,6 +1,6 @@
-# the `power` project
+# the `powr` project
 
-`power` aims to be a javascript/typescript engine to power serverless functions over the web.
+`powr` aims to be a javascript/typescript engine to power serverless functions over the web.
 the javascript code gets compiled to remove as much cold start interpreting would cause as possible.
 
 the project currently doesn't support anything other than calling `console.log` with a `string` argument. if you want to
