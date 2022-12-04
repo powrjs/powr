@@ -26,8 +26,6 @@ pub fn link_to_binary(path: &String) {
 
     handle_output(cmd.output());
     println!("Linked to binary: '{}'", bin_path);
-
-    let obj_path = path.replace(".ll", ".o");
 }
 
 fn handle_output(output: io::Result<Output>) {
