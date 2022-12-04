@@ -269,6 +269,18 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
 
                 Ok(string_pointer.as_pointer_value().into())
             }
+            Lit::Num(number) => {
+                let variable_name = number.raw.as_ref().unwrap();
+                let number_value = number.value;
+                let const_float = self.context.f64_type().const_float(number_value);
+                let f64_type = self.context.f64_type();
+                let pointer_value = self
+                    .builder
+                    .build_alloca(f64_type, &*variable_name.to_string());
+                self.builder.build_store(pointer_value, const_float);
+
+                Ok(pointer_value.into())
+            }
             Lit::Null(_) => Ok(self.null_pointer().into()),
             _ => {
                 return Err(CompilerError {
