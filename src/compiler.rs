@@ -4,12 +4,12 @@ use deno_ast::swc::ast::{
 use inkwell::builder::Builder;
 use inkwell::context::Context;
 use inkwell::module::Module;
-use inkwell::values::{AnyValueEnum, BasicValue, FunctionValue, PointerValue};
+use inkwell::types::AnyTypeEnum;
+use inkwell::values::{AnyValue, AnyValueEnum, BasicValue, FunctionValue, PointerValue};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
-use std::fs;
 use std::path::Path;
 
 #[derive(Debug)]
@@ -275,29 +275,20 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
                 let string_pointer =
                     unsafe { self.builder.build_global_string(&string.value, "string") };
 
-                Ok(string_pointer.as_pointer_value().into())
+                Ok(string_pointer.as_any_value_enum())
             }
             Lit::Num(number) => {
-                let variable_name = number.raw.as_ref().unwrap();
                 let number_value = number.value;
-                let const_float = self.context.f64_type().const_float(number_value);
                 let f64_type = self.context.f64_type();
-                let pointer_value = self
-                    .builder
-                    .build_alloca(f64_type, &*variable_name.to_string());
-                self.builder.build_store(pointer_value, const_float);
+                let const_float = f64_type.const_float(number_value);
 
-                Ok(pointer_value.into())
+                Ok(const_float.as_any_value_enum())
             }
             Lit::Bool(boolean) => {
                 let bool_type = self.context.bool_type();
                 let const_bool = bool_type.const_int(boolean.value.into(), false);
-                let pointer_value = self
-                    .builder
-                    .build_alloca(bool_type, &*boolean.value.to_string());
-                self.builder.build_store(pointer_value, const_bool);
 
-                Ok(pointer_value.into())
+                Ok(const_bool.as_any_value_enum())
             }
             Lit::Null(_) => Ok(self.null_pointer().into()),
             _ => {
@@ -328,12 +319,74 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
         for declaration in declarations {
             let name = self.compile_pattern(&declaration.name)?;
             let init = self.compile_expression(&declaration.init.as_ref().unwrap())?;
-
             let kind = VariableKind::from_string(kind.to_string());
-            self.add_variable(name, init.into_pointer_value(), kind);
+
+            let pointer = self.allocate_variable(&name, &init, &kind)?;
+            self.add_variable(name, pointer, kind);
         }
 
         Ok(())
+    }
+
+    fn allocate_variable(
+        &self,
+        variable_name: &String,
+        init_value: &AnyValueEnum<'ctx>,
+        _variable_kind: &VariableKind,
+    ) -> Result<PointerValue<'ctx>, CompilerError> {
+        let variable_type = init_value.get_type();
+
+        let variable_value = match variable_type {
+            AnyTypeEnum::ArrayType(array) => {
+                let pointer = self.builder.build_alloca(array, &variable_name);
+                self.builder
+                    .build_store(pointer, init_value.into_array_value());
+
+                pointer
+            }
+            AnyTypeEnum::FloatType(float) => {
+                let pointer = self.builder.build_alloca(float, &variable_name);
+                self.builder
+                    .build_store(pointer, init_value.into_float_value());
+
+                pointer
+            }
+            AnyTypeEnum::IntType(int) => {
+                let pointer = self.builder.build_alloca(int, &variable_name);
+                self.builder
+                    .build_store(pointer, init_value.into_int_value());
+
+                pointer
+            }
+            AnyTypeEnum::PointerType(pointer) => {
+                let pointer = self.builder.build_alloca(pointer, &variable_name);
+                self.builder
+                    .build_store(pointer, init_value.into_pointer_value());
+
+                pointer
+            }
+            AnyTypeEnum::StructType(structt) => {
+                let pointer = self.builder.build_alloca(structt, &variable_name);
+                self.builder
+                    .build_store(pointer, init_value.into_struct_value());
+
+                pointer
+            }
+            AnyTypeEnum::VectorType(vector) => {
+                let pointer = self.builder.build_alloca(vector, &variable_name);
+                self.builder
+                    .build_store(pointer, init_value.into_vector_value());
+
+                pointer
+            }
+            _ => {
+                return Err(CompilerError {
+                    message: "Unsupported variable type".to_string(),
+                });
+            }
+        };
+
+        Ok(variable_value)
     }
 
     fn compile_pattern(&self, pattern: &Pat) -> Result<String, CompilerError> {
