@@ -60,7 +60,7 @@ fn compile_action(ctx: &seahorse::Context) {
     match compiler.compile(parsed_script.unwrap().program_ref()) {
         Ok(_) => {}
         Err(err) => {
-            eprintln!("Failed to compile script: {:?}", err);
+            eprintln!("{}", err);
             exit(1);
         }
     }
@@ -75,7 +75,7 @@ fn compile_action(ctx: &seahorse::Context) {
         match compiler.write_to_file(&file) {
             Ok(_) => println!("Compiled successfully to '{}'", file),
             Err(err) => {
-                eprintln!("Failed to write to file: {:?}", err);
+                eprintln!("Failed to write to file: {}", err);
                 exit(1);
             }
         }

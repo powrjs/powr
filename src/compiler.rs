@@ -9,7 +9,6 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
-use std::process::exit;
 
 #[derive(Debug)]
 pub struct CompilerError {
@@ -18,7 +17,7 @@ pub struct CompilerError {
 
 impl Display for CompilerError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "An error occurred while compiling")
+        write!(f, "An error occurred while compiling: '{}'", self.message)
     }
 }
 
