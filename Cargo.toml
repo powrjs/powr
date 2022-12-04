@@ -11,3 +11,4 @@ license = "SSPL-1.0"
 [dependencies]
 deno_ast = { version = "0.21.0", features = ["transforms", "visit", "typescript"] }
 inkwell = { path = "./vendor/inkwell", features = ["llvm14-0", "default", "internal-getters"] }
+seahorse = "2.1.0"
