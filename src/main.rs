@@ -30,6 +30,7 @@ fn compile_command() -> Command {
         .usage("powr compile [FILE] [OPTIONS]")
         .flag(emmit_llvm_ir_flag())
         .flag(dry_run_flag())
+        .flag(show_variables_flag())
         .action(compile_action)
 }
 
@@ -43,6 +44,12 @@ fn dry_run_flag() -> Flag {
     Flag::new("dry-run", FlagType::Bool)
         .description("Only emits the LLVM IR")
         .alias("d")
+}
+
+fn show_variables_flag() -> Flag {
+    Flag::new("show-variables", FlagType::Bool)
+        .description("Show variables")
+        .alias("s")
 }
 
 fn compile_action(ctx: &seahorse::Context) {
@@ -71,8 +78,11 @@ fn compile_action(ctx: &seahorse::Context) {
     // TODO: use regex
     let file = file.replace(".ts", ".ll").replace(".js", ".ll");
 
-    let dry_run = ctx.bool_flag("dry-run");
+    if ctx.bool_flag("show-variables") {
+        compiler.show_variables();
+    }
 
+    let dry_run = ctx.bool_flag("dry-run");
     if !dry_run {
         match compiler.write_to_file(&file) {
             Ok(_) => println!("Compiled successfully to '{}'", file),

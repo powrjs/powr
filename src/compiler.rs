@@ -80,6 +80,14 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
             .insert(name, Variable { pointer, kind });
     }
 
+    pub fn show_variables(&self) {
+        println!("Variables:");
+        for (_name, variable) in self.variables.borrow().iter() {
+            println!("{}", variable.pointer.print_to_string().to_string());
+        }
+        println!();
+    }
+
     pub fn write_to_file(&self, path: &str) -> Result<(), Box<dyn Error>> {
         self.module.print_to_file(path)?;
         Ok(())
