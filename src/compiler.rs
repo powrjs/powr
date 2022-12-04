@@ -9,6 +9,8 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
+use std::fs;
+use std::path::Path;
 
 #[derive(Debug)]
 pub struct CompilerError {
@@ -55,10 +57,13 @@ pub(crate) struct Compiler<'a, 'ctx> {
 }
 
 impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
-    pub fn new(context: &'a Context) -> Self {
+    pub fn new(context: &'a Context, source_path: &str) -> Self {
+        let file = Path::new(source_path);
+        let filename = file.file_name().unwrap().to_str().unwrap();
+
         Self {
             context,
-            module: context.create_module("main"),
+            module: context.create_module(filename),
             builder: context.create_builder(),
             variables: RefCell::new(HashMap::new()),
             main_fn: None,

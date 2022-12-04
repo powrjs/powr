@@ -44,6 +44,7 @@ fn dry_run_flag() -> Flag {
 }
 
 fn compile_action(ctx: &seahorse::Context) {
+    let file = ctx.args.first().unwrap();
     let parsed_script = get_parsed_script(ctx);
     if parsed_script.is_err() {
         eprintln!("Failed to parse script: \n{:?}", parsed_script);
@@ -51,7 +52,7 @@ fn compile_action(ctx: &seahorse::Context) {
     }
 
     let context = Context::create();
-    let mut compiler = Compiler::new(&context);
+    let mut compiler = Compiler::new(&context, file);
 
     compiler
         .compile_main_function()
@@ -66,7 +67,6 @@ fn compile_action(ctx: &seahorse::Context) {
     }
 
     // TODO: use regex
-    let file = ctx.args.first().unwrap();
     let file = file.replace(".ts", ".ll").replace(".js", ".ll");
 
     let dry_run = ctx.bool_flag("dry-run");
