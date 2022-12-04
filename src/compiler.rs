@@ -66,6 +66,10 @@ impl<'a: 'ctx, 'ctx> Compiler<'a, 'ctx> {
         }
     }
 
+    pub fn get_llvm_ir(&self) -> String {
+        self.module.print_to_string().to_string()
+    }
+
     fn add_variable(&self, name: String, pointer: PointerValue<'ctx>, kind: VariableKind) {
         self.variables
             .borrow_mut()

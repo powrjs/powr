@@ -1,7 +1,8 @@
-use crate::backend_runner::{link_to_binary, link_to_obj};
+use crate::backend_runner::{link_to_binary, link_to_obj, remove_file};
 use compiler::Compiler;
 use deno_ast::{parse_script, Diagnostic, ParseParams, ParsedSource, SourceTextInfo};
 use inkwell::context::Context;
+use seahorse::{App, Command, Flag, FlagType};
 use std::env::args;
 use std::process::exit;
 
@@ -9,7 +10,41 @@ mod backend_runner;
 mod compiler;
 
 fn main() {
-    let parsed_script = get_parsed_script();
+    let args: Vec<String> = args().collect();
+    let app = App::new(env!("CARGO_PKG_NAME"))
+        .description(env!("CARGO_PKG_DESCRIPTION"))
+        .version(env!("CARGO_PKG_VERSION"))
+        .author(env!("CARGO_PKG_AUTHORS"))
+        .usage("powr [OPTIONS] [FILE]")
+        .command(compile_command());
+
+    app.run(args);
+}
+
+fn compile_command() -> Command {
+    Command::new("compile")
+        .alias("c")
+        .description("Compile a TypeScript/JavaScript file")
+        .usage("powr compile [FILE] [OPTIONS]")
+        .flag(emmit_llvm_ir_flag())
+        .flag(dry_run_flag())
+        .action(compile_action)
+}
+
+fn emmit_llvm_ir_flag() -> Flag {
+    Flag::new("emmit-llvm", FlagType::Bool)
+        .description("Emmit LLVM IR")
+        .alias("e")
+}
+
+fn dry_run_flag() -> Flag {
+    Flag::new("dry-run", FlagType::Bool)
+        .description("Only emits the LLVM IR")
+        .alias("d")
+}
+
+fn compile_action(ctx: &seahorse::Context) {
+    let parsed_script = get_parsed_script(ctx);
     if parsed_script.is_err() {
         eprintln!("Failed to parse script: \n{:?}", parsed_script);
         exit(1);
@@ -31,22 +66,41 @@ fn main() {
     }
 
     // TODO: use regex
-    let file = get_file_path().replace(".js", ".ll").replace(".ts", ".ll");
-    match compiler.write_to_file(&file) {
-        Ok(_) => println!("Compiled successfully to '{}'", file), // TODO: make this configurable
-        Err(err) => {
-            eprintln!("Failed to write to file: {:?}", err);
-            exit(1);
+    let file = ctx.args.first().unwrap();
+    let file = file.replace(".ts", ".ll").replace(".js", ".ll");
+
+    let dry_run = ctx.bool_flag("dry-run");
+
+    if !dry_run {
+        match compiler.write_to_file(&file) {
+            Ok(_) => println!("Compiled successfully to '{}'", file),
+            Err(err) => {
+                eprintln!("Failed to write to file: {:?}", err);
+                exit(1);
+            }
         }
+    } else {
+        println!("{}", compiler.get_llvm_ir());
+        exit(0);
     }
 
-    link_to_obj(&file);
+    let obj_file_path = link_to_obj(&file);
     link_to_binary(&file);
+
+    remove_file(&obj_file_path);
+    if !ctx.bool_flag("emmit-llvm") {
+        remove_file(&file);
+    }
 }
 
-fn get_parsed_script() -> Result<ParsedSource, Diagnostic> {
-    let file = get_file_path();
-    let code = get_code();
+fn get_parsed_script(ctx: &seahorse::Context) -> Result<ParsedSource, Diagnostic> {
+    let file = ctx.args.first().unwrap();
+    if !file.ends_with(".js") && !file.ends_with(".ts") {
+        eprintln!("File must be a TypeScript or JavaScript file");
+        exit(1);
+    }
+
+    let code = std::fs::read_to_string(file).expect("Failed to read file");
     let text_info = SourceTextInfo::new(code.into());
     let parsed_script = parse_script(ParseParams {
         specifier: format!("file:///{}", file).into(), // FIXME
@@ -58,55 +112,4 @@ fn get_parsed_script() -> Result<ParsedSource, Diagnostic> {
     });
 
     parsed_script
-}
-
-fn get_code() -> String {
-    let args: Vec<String> = args().collect();
-    if args.len() != 3 {
-        eprintln!("Usage:");
-        eprintln!("\t{} [compile|c] [js/ts file]", args[0]);
-        eprintln!("\t{} [run|r] [js/ts code]", args[0]);
-        exit(1);
-    }
-
-    let action = args[1].clone();
-    let code = match action.as_str() {
-        "compile" | "c" => {
-            let file = &args[2];
-            let code = std::fs::read_to_string(file).unwrap();
-            code
-        }
-        "run" | "r" => {
-            let code = &args[2];
-            code.to_string()
-        }
-        _ => {
-            eprintln!("Invalid action: {}", action);
-            exit(1);
-        }
-    };
-
-    code
-}
-
-fn get_file_path() -> String {
-    let args: Vec<String> = args().collect();
-    if args.len() != 3 {
-        eprintln!("Usage:");
-        eprintln!("\t{} [compile|c] [js/ts file]", args[0]);
-        eprintln!("\t{} [run|r] [js/ts code]", args[0]);
-        exit(1);
-    }
-
-    let action = &args[1];
-    let file_or_code = &args[2];
-
-    match action.as_str() {
-        "compile" | "c" => file_or_code.clone(),
-        "run" | "r" => "script.ll".to_string(),
-        _ => {
-            eprintln!("Invalid action: {}", action);
-            exit(1);
-        }
-    }
 }

@@ -1,7 +1,7 @@
 use std::process::{exit, Command, Output};
 use std::{fs, io};
 
-pub fn link_to_obj(path: &String) {
+pub fn link_to_obj(path: &String) -> String {
     let mut cmd = Command::new("llc");
     let obj_path = path.replace(".ll", ".o");
 
@@ -12,6 +12,8 @@ pub fn link_to_obj(path: &String) {
 
     handle_output(cmd.output());
     println!("Linked to object file: '{}'", &obj_path);
+
+    obj_path
 }
 
 pub fn link_to_binary(path: &String) {
@@ -26,8 +28,6 @@ pub fn link_to_binary(path: &String) {
     println!("Linked to binary: '{}'", bin_path);
 
     let obj_path = path.replace(".ll", ".o");
-    remove_file(path);
-    remove_file(&obj_path);
 }
 
 fn handle_output(output: io::Result<Output>) {
@@ -40,7 +40,7 @@ fn handle_output(output: io::Result<Output>) {
     }
 }
 
-fn remove_file(path: &String) {
+pub fn remove_file(path: &String) {
     match fs::remove_file(path) {
         Ok(_) => println!("Removed file: '{}'", path),
         Err(err) => {
