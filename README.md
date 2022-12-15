@@ -1,5 +1,9 @@
 # the `powr` project
 
+---
+Development is paused until 2023. 🥳
+---
+
 `powr` aims to be a javascript/typescript engine to power serverless functions over the web.
 the javascript code gets compiled to remove as much cold start interpreting would cause as possible.
 
