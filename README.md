@@ -1,7 +1,9 @@
 # the `powr` project
 
 ---
-Development is paused until 2023. 🥳
+
+Development is paused until my keyboard arrives.
+
 ---
 
 `powr` aims to be a javascript/typescript engine to power serverless functions over the web.
