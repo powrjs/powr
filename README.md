@@ -2,7 +2,9 @@
 
 ---
 
-Development is paused until my keyboard arrives.
+<p align="center">
+	Development is paused until my keyboard arrives.
+</p>
 
 ---
 
