@@ -3,7 +3,7 @@
 ---
 
 <p align="center">
-	Development is paused until my keyboard arrives.
+	Development is paused.
 </p>
 
 ---
